@@ -5,6 +5,8 @@
 #include <cstdlib>
 #include <algorithm>
 #include <sstream>
+#include <limits>
+
 using namespace std;
 
 // Structure for client information
@@ -99,7 +101,7 @@ class Account {
 private:
     string name;
     string email;
-    string contactNo;
+    int contactNo;
     string username;
     string password;
 
@@ -138,20 +140,30 @@ private:
 
     void createUser(const string& username, const string& password) {
         ofstream file("credentials.txt", ios_base::app);
-        file << username << "," << encryptPassword(password) << endl;
+        file << name << ", " << email << ", " << contactNo << ", " << username << ", " << encryptPassword(password) << endl;
         cout << "User created successfully." << endl;
     }
 
 public:
+
     void registerUser() {
-    	
+        string contactStr = to_string(contactNo);
     	cout << "Enter your name: ";
     	cin.ignore();
     	getline (cin, name);
     	cout << "Enter your email: ";
     	cin >> email;
-    	cout << "Enter your contact number: ";
-    	cin >> contactNo;
+
+        while(true){
+            cout << "Enter your contact number: ";
+            cin >> contactStr;
+            if(contactStr.size() != 11){
+                cout << "Invalid. Please enter a 11 digit contact number. " << endl;
+                continue;
+            }
+            break;
+        }
+        
         cout << "Enter username: ";
         cin >> username;
         if (isUserExists(username)) {
@@ -162,7 +174,6 @@ public:
             cin >> password;
             createUser(username, password);
         }
-        
     }
 
     string loginUser() {
@@ -214,15 +225,35 @@ void displayAdminMenu() {
     cout << "Enter your choice: ";
 }
 
+int getMenuChoice() {
+    int choice;
+    cout << "1. Login" << endl;
+    cout << "2. Register" << endl;
+    cout << "3. Exit" << endl;
+    cout << "Enter your choice: ";
+    cin >> choice;
+    return choice;
+}
+
 // Function to handle client login
 void clientLogin(HotelReservationSystem& system) {
-    // Your code for client login here
+    Account client_login;
+    
+    string loggedInUsername = client_login.loginUser();
+    if (!loggedInUsername.empty()) {
+        if(loggedInUsername == "admin"){
+            cout << "Admin na dito" << endl;
+		} else {
+			cout << "Logged-in username: " << loggedInUsername << endl;
+		}
+    }
 }
 
 // Function to handle client registration
 void clientRegistration(HotelReservationSystem& system) {
     Account client_register;
     client_register.registerUser();
+    clientLogin(system);
 }
 
 // Function to handle the main client menu
@@ -318,37 +349,43 @@ void handleAdminMenu(HotelReservationSystem& system) {
 
 // Function to handle the main menu
 void handleMainMenu(HotelReservationSystem& system) {
-    int userType;
-    cout << "=== Hotel and Event Place Reservation System ===" << endl;
-    cout << "1. Admin" << endl;
-    cout << "2. Client" << endl;
-    cout << "Enter user type: ";
-    cin >> userType;
+    char userType;
+    do{
+        cout << "=== Hotel and Event Place Reservation System ===" << endl;
+        cout << "1. Admin" << endl;
+        cout << "2. Client" << endl;
+        cout << "Enter user type: ";
+        cin >> userType;
 
-    if (userType == 1) {
-        // Handle admin login here
-        handleAdminMenu(system);
-    } else if (userType == 2) {
-        int loginChoice;
-        cout << "1. Login" << endl;
-        cout << "2. Register" << endl;
-        cout << "Enter your choice: ";
-        cin >> loginChoice;
+        if (userType == '1') {
+            // Handle admin login here
+            handleAdminMenu(system);
+        } else if (userType == '2') {
+            char loginChoice;
+            cout << "1. Login" << endl;
+            cout << "2. Register" << endl;
+            cout << "3. Exit" << endl;
+            cout << "Enter your choice: ";
+            cin >> loginChoice;
 
-        if (loginChoice == 1) {
-            // Handle client login here
-            clientLogin(system);
-            handleClientMenu(system);
-        } else if (loginChoice == 2) {
-            // Handle client registration here
-            clientRegistration(system);
-            handleClientMenu(system);
+            if (loginChoice == '1') {
+                // Handle client login here
+                clientLogin(system);
+                handleClientMenu(system);
+            } else if (loginChoice == '2') {
+                // Handle client registration here
+                clientRegistration(system);
+                clientLogin(system);
+            } else if(loginChoice == '3'){
+                break;
+            } else {
+                cout << "Invalid choice." << endl;
+                getch();
+            }
         } else {
-            cout << "Invalid choice. Exiting..." << endl;
+            cout << "Invalid user type." << endl;
         }
-    } else {
-        cout << "Invalid user type. Exiting..." << endl;
-    }
+    }while(userType != '3');
 }
 
 int main() {
