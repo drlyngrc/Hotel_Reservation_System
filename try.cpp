@@ -165,7 +165,7 @@ void showLoginPage(){
         case 3:
             cout << "Exiting..." << endl;
             system("pause");
-            return 0;
+            exit(0);
 
         default:
             break;
@@ -175,5 +175,7 @@ void showLoginPage(){
 
 int main() {
     
-    while (true) 
+    while (true) {
+    	showLoginPage();
+	}
 }
