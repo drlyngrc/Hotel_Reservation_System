@@ -127,21 +127,33 @@ public:
 	}
 };
 
-int getMenuChoice() {
-    int choice;
-    cout << "1. Register" << endl;
-    cout << "2. Login" << endl;
-    cout << "3. Exit" << endl;
-    cout << "Enter your choice: ";
-    cin >> choice;
-    return choice;
+int getIntInput() {
+    int value;
+    while (true) {
+        if (cin >> value) {
+            // Input is a valid integer
+            break;
+        } else {
+            // Clear the error flag and discard the invalid input
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << endl << "Invalid input. Please enter an integer: ";
+        }
+    }
+    return value;
 }
+
 
 void showLoginPage(){
 	Account account;
     system("cls");
     cout << "Login System" << endl;
-    int choice = getMenuChoice();
+    int choice;
+    cout << "1. Register" << endl;
+    cout << "2. Login" << endl;
+    cout << "3. Exit" << endl;
+    cout << "Enter your choice: ";
+    getIntInput();
 
     switch (choice) {
         case 1:
@@ -168,6 +180,8 @@ void showLoginPage(){
             exit(0);
 
         default:
+        	cout << endl << "Invalid Input" << endl;
+        	system("pause");
             break;
     }
 }
