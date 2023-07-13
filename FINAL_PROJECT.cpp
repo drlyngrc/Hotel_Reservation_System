@@ -188,7 +188,6 @@ public:
     }
 
     string loginUser() {
-    	getch();
     	system("cls");
     	cout << "=== Log In ===" << endl;
         cout << "Enter username: ";
@@ -217,6 +216,124 @@ public:
             }
         }
     }
+    
+    //--------------------------------------------------------------------------------------------------------------------
+    bool isCurrentPasswordValid(const string& username, const string& currentPassword) {
+        ifstream file("credentials.txt");
+        string line;
+        while (getline(file, line)) {
+            size_t commaPos = line.find(',');
+            string storedUsername = line.substr(0, commaPos);
+            string storedPassword = line.substr(commaPos + 1, line.find(',', commaPos + 1) - commaPos - 1);
+
+            if (storedUsername == username && storedPassword == encryptPassword(currentPassword)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void changePassword(const string& username, const string& currentPassword, const string& newPassword) {
+        if (!isCurrentPasswordValid(username, currentPassword)) {
+            cout << "Incorrect current password." << endl;
+            return;
+        }
+
+        // Read the credentials file
+        ifstream file("credentials.txt");
+        string line;
+        stringstream newFileContents;
+
+        // Process each line in the file
+        while (getline(file, line)) {
+            size_t commaPos = line.find(',');
+            string storedUsername = line.substr(0, commaPos);
+            string storedPassword = line.substr(commaPos + 1, line.find(',', commaPos + 1) - commaPos - 1);
+
+            if (storedUsername == username && storedPassword == encryptPassword(currentPassword)) {
+                // Found the line with the user's credentials and the correct current password,
+                // update the password with the new password
+                newFileContents << username << "," << encryptPassword(newPassword) << line.substr(commaPos) << endl;
+                cout << "Password changed successfully." << endl;
+            } else {
+                // Keep the line unchanged
+                newFileContents << line << endl;
+            }
+        }
+
+        // Write the updated contents back to the file
+        ofstream outFile("credentials.txt");
+        outFile << newFileContents.str();
+    }
+
+    void updateEmail(const string& username, const string& currentPassword, const string& newEmail) {
+        if (!isCurrentPasswordValid(username, currentPassword)) {
+            cout << "Incorrect current password." << endl;
+            return;
+        }
+
+        // Read the credentials file
+        ifstream file("credentials.txt");
+        string line;
+        stringstream newFileContents;
+
+        // Process each line in the file
+        while (getline(file, line)) {
+            size_t commaPos = line.find(',');
+            string storedUsername = line.substr(0, commaPos);
+            string storedPassword = line.substr(commaPos + 1, line.find(',', commaPos + 1) - commaPos - 1);
+
+            if (storedUsername == username && storedPassword == encryptPassword(currentPassword)) {
+                // Found the line with the user's credentials and the correct current password,
+                // update the email with the new email
+                newFileContents << username << "," << storedPassword << "," << name << "," << newEmail << "," << contactNumber << endl;
+                cout << "Email updated successfully." << endl;
+            } else {
+                // Keep the line unchanged
+                newFileContents << line << endl;
+            }
+        }
+
+        // Write the updated contents back to the file
+        ofstream outFile("credentials.txt");
+        outFile << newFileContents.str();
+    }
+
+    void updateContactNumber(const string& username, const string& currentPassword, const string& newContactNumber) {
+        if (!isCurrentPasswordValid(username, currentPassword)) {
+            cout << "Incorrect current password." << endl;
+            return;
+        }
+
+        // Read the credentials file
+        ifstream file("credentials.txt");
+        string line;
+        stringstream newFileContents;
+
+        // Process each line in the file
+        while (getline(file, line)) {
+            size_t commaPos = line.find(',');
+            string storedUsername = line.substr(0, commaPos);
+            string storedPassword = line.substr(commaPos + 1, line.find(',', commaPos + 1) - commaPos - 1);
+
+            if (storedUsername == username && storedPassword == encryptPassword(currentPassword)) {
+                // Found the line with the user's credentials and the correct current password,
+                // update the contact number with the new contact number
+                newFileContents << username << "," << storedPassword << "," << name << "," << email << "," << newContactNumber << endl;
+                cout << "Contact number updated successfully." << endl;
+            } else {
+                // Keep the line unchanged
+                newFileContents << line << endl;
+            }
+        }
+
+        // Write the updated contents back to the file
+        ofstream outFile("credentials.txt");
+        outFile << newFileContents.str();
+    }
+    
+    
+    
 };
 
 // Function to display the client menu
@@ -278,7 +395,6 @@ void view_room(HotelReservationSystem& sys){
     Room_type room;
     
     while (true) {
-    	getch();
     	system("cls");
         cout << "ROOM TYPE" << endl;
         cout << "1. Standard Room" << endl;
@@ -333,13 +449,132 @@ void view_room(HotelReservationSystem& sys){
     }
 }
 
+int getIntInput() {
+    int value;
+    while (true) {
+        if (cin >> value) {
+            // Input is a valid integer
+            break;
+        } else {
+            // Clear the error flag and discard the invalid input
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            cout << endl << "Invalid input. Please enter an integer: ";
+        }
+    }
+    return value;
+}
+
+void Account_setting(HotelReservationSystem& sys){
+	Account settings;
+    system("cls");
+    cout << "=== Account Setting ===" << endl;
+    int choice;
+    cout << "1. User Info" << endl;
+    cout << "2. Change Password" << endl;
+    cout << "3. Update Email" << endl;
+    cout << "4. Update Contact Number" << endl;
+    cout << "5. Back" << endl;
+    cout << "0. Exit" << endl;
+    cout << "Enter your choice: ";
+    choice = getIntInput();
+
+	switch (choice) {
+        case 1: {
+            //display user info
+            break;
+        }
+
+        case 2: {
+            string username;
+            string currentPassword;
+            string newPassword;
+
+            cout << "Enter username: ";
+            cin >> username;
+            cout << "Enter current password: ";
+            cin >> currentPassword;
+
+            if (!settings.isCurrentPasswordValid(username, currentPassword)) {
+                cout << "Incorrect current password." << endl;
+                system("pause");
+                break;
+            }
+
+            cout << "Enter new password: ";
+            cin >> newPassword;
+
+           settings.changePassword(username, currentPassword, newPassword);
+            system("pause");
+            break;
+        }
+
+        case 3: {
+            string username;
+            string currentPassword;
+            string newEmail;
+
+            cout << "Enter username: ";
+            cin >> username;
+            cout << "Enter current password: ";
+            cin >> currentPassword;
+
+            if (!settings.isCurrentPasswordValid(username, currentPassword)) {
+                cout << "Incorrect current password." << endl;
+                system("pause");
+                break;
+            }
+
+            cout << "Enter new email: ";
+            cin >> newEmail;
+
+            settings.updateEmail(username, currentPassword, newEmail);
+            system("pause");
+            break;
+        }
+
+        case 4: {
+            string username;
+            string currentPassword;
+            string newContactNumber;
+
+            cout << "Enter username: ";
+            cin >> username;
+            cout << "Enter current password: ";
+            cin >> currentPassword;
+
+            if (!settings.isCurrentPasswordValid(username, currentPassword)) {
+                cout << "Incorrect current password." << endl;
+                system("pause");
+                break;
+            }
+
+            cout << "Enter new contact number: ";
+            cin >> newContactNumber;
+
+            settings.updateContactNumber(username, currentPassword, newContactNumber);
+            system("pause");
+            break;
+        }
+
+        case 5:
+            return;
+        
+        case 0:
+        	exit(0);
+
+        default:
+            cout << endl << "Invalid Input" << endl;
+            system("pause");
+            break;
+    }
+}
 
 // Function to handle the main admin menu
 void AdminMenu(HotelReservationSystem& sys) {
 
     int choice;
     do {
-    	getch();
     	system("cls");
         displayAdminMenu();
         cin >> choice;
@@ -363,7 +598,7 @@ void AdminMenu(HotelReservationSystem& sys) {
 void ClientMenu(HotelReservationSystem& sys) {
     int choice;
     do {
-    	getch();
+
     	system("cls");
         displayClientMenu();
         cin >> choice;
@@ -380,6 +615,7 @@ void ClientMenu(HotelReservationSystem& sys) {
                 break;
             case 4:
                 // Your code for account settings here
+                Account_setting(sys);
                 break;
             case 5:
             	cout << "Logging out..." << endl;
@@ -416,9 +652,12 @@ void showLoginPage(HotelReservationSystem& sys){
             if (!loggedInUsername.empty()) {
                 if (loggedInUsername == "admin") {
                     cout << "Admin is logged in." << endl;
+                    getch();
                     AdminMenu(sys);
                 } else {
-                    cout << "Logged-in username: " << loggedInUsername << endl;
+                    //cout << "Logged-in username: " << loggedInUsername << endl;
+                    cout << "Logged in successfully." << endl;
+					getch();
                     ClientMenu(sys);
                 }
             }
