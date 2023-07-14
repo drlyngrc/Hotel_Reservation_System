@@ -6,7 +6,6 @@
 #include <cstdlib>
 #include <algorithm>
 #include <sstream>
-
 using namespace std;
 
 class Account {
@@ -58,6 +57,9 @@ private:
 
 public:
     void registerUser() {
+    	system("pause");
+    	system("cls");
+    	cout << "=== Register ===" << endl;
         cout << "Enter name: ";
         cin.ignore();
         getline(cin, name);
@@ -93,7 +95,7 @@ public:
             cout << "Username already exists." << endl;
         }
 		else if (username == "admin"){
-			cout << "Bobo mo." << endl;
+			cout << "'admin' is restricted as username." << endl;
 		} else {
             cout << "Enter password: ";
             cin >> password;
@@ -102,6 +104,8 @@ public:
     }
 
     string loginUser() {
+    	system("cls");
+    	cout << "=== Log In ===" << endl;
         cout << "Enter username: ";
         cin >> username;
         if (username == "admin") {
@@ -242,4 +246,6 @@ public:
         ofstream outFile("credentials");
         outFile << newFileContents.str();
     }
+    
 };
+
