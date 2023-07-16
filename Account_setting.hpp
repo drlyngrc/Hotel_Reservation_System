@@ -26,7 +26,17 @@ void Account_setting(HotelReservationSystem& sys){
 
 	switch (choice) {
         case 1: {
-            //display user info
+            Account account;
+			string loggedInUser = account.loginUser();
+			system("pause");
+			system("cls");
+			
+			
+			if (!loggedInUser.empty()) {
+			    // User logged in successfully
+			    account.printUserInfo(loggedInUser);
+			}
+			system("pause");
             break;
         }
 
