@@ -58,6 +58,22 @@ private:
     }
 
 public:
+	bool isValidEmail(const string& email) {
+	    // Check for the presence of '@' symbol
+	    size_t atPos = email.find('@');
+	    if (atPos == string::npos)
+	        return false;
+	    // Check for the presence of '.' after the '@' symbol
+	    size_t dotPos = email.find('.', atPos);
+	    if (dotPos == string::npos)
+	        return false;
+	    // Check if there are at least two characters after the last dot
+	    if (dotPos >= email.length() - 2)
+	        return false;
+	
+	    return true;
+	}
+
     void registerUser() {
     	system("pause");
     	system("cls");
@@ -68,6 +84,10 @@ public:
 
         cout << "Enter email: ";
         cin >> email;
+	    if (!isValidEmail(email)) {
+	        cout << "Invalid email format. Please enter a valid email." << endl;
+	        return;
+	    }
 
         bool validContactNumber = false;
         while (!validContactNumber) {
@@ -293,6 +313,7 @@ public:
 	    cout << "User information not found." << endl;
 	}
 
+	
 
 };
 
