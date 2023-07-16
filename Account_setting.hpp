@@ -10,24 +10,8 @@
 
 using namespace std;
 
-int getIntInput() {
-    int value;
-    while (true) {
-        if (cin >> value) {
-            // Input is a valid integer
-            break;
-        } else {
-            // Clear the error flag and discard the invalid input
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << endl << "Invalid input. Please enter an integer: ";
-        }
-    }
-    return value;
-}
-
 void Account_setting(HotelReservationSystem& sys){
-	Account settings;
+    Account settings;
     system("cls");
     cout << "=== Account Settings ===" << endl;
     int choice;
@@ -38,7 +22,7 @@ void Account_setting(HotelReservationSystem& sys){
     cout << "5. Back" << endl;
     cout << "0. Exit" << endl;
     cout << "Enter your choice: ";
-    choice = getIntInput();
+    cin >> choice;
 
 	switch (choice) {
         case 1: {
