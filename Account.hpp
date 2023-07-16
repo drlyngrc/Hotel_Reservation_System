@@ -6,6 +6,8 @@
 #include <cstdlib>
 #include <algorithm>
 #include <sstream>
+#include <Windows.h>
+#include <conio.h>
 using namespace std;
 
 class Account {
@@ -103,6 +105,26 @@ public:
         }
     }
 
+    string getMaskedInput() {
+		const char maskChar = '*';
+	    string input;
+		char ch;
+		    
+		while ((ch = _getch()) != '\r') {
+	        if (ch == '\b') {
+	            if (!input.empty()) {
+		            input.pop_back();
+		            cout << "\b \b";
+		        }
+		    } else {
+		        input.push_back(ch);
+		        cout << maskChar;
+		    }
+		}    
+		cout << endl;    
+		return input;
+	}
+
     string loginUser() {
     	system("cls");
     	cout << "=== Log In ===" << endl;
@@ -110,7 +132,7 @@ public:
         cin >> username;
         if (username == "admin") {
             cout << "Enter password: ";
-            cin >> password;
+            string password = getMaskedInput();
             if (password == "hrsadmin") {
                 return "admin";
             } else {
@@ -123,7 +145,7 @@ public:
             return "";
         } else {
             cout << "Enter password: ";
-            cin >> password;
+            string password = getMaskedInput();
             if (isLoginValid(username, password)) {
                 return username;
             } else {
