@@ -268,29 +268,31 @@ public:
         ofstream outFile("credentials");
         outFile << newFileContents.str();
     }
-    void printUserInfo(const string& username, const string& password) {
-	ifstream file("credentials");
-	string line;
-	while (getline(file, line)) {
-	    size_t commaPos = line.find(',');
-	    string storedUsername = line.substr(0, commaPos);
-	    string storedPassword = line.substr(commaPos + 1, line.find(',', commaPos + 1) - commaPos - 1);
-
-	    if (storedUsername == username && storedPassword == encryptPassword(password)) {
-		string storedName = line.substr(commaPos + 1, line.find(',', commaPos + 1) - commaPos - 1);
-		string storedEmail = line.substr(commaPos + 1, line.find(',', commaPos + 1) - commaPos - 1);
-		string storedContactNumber = line.substr(commaPos + 1, line.find(',', commaPos + 1) - commaPos - 1);
-
-		cout << "Username: " << username << endl;
-		cout << "Name: " << storedName << endl;
-		cout << "Email: " << storedEmail << endl;
-		cout << "Contact Number: " << storedContactNumber << endl;
-
-		return;
+    void printUserInfo(const string& username) {
+	    ifstream file("credentials");
+	    string line;
+	    while (getline(file, line)) {
+	        size_t commaPos = line.find(',');
+	        string storedUsername = line.substr(0, commaPos);
+	        if (storedUsername == username) {
+	            string storedPassword = line.substr(commaPos + 1, line.find(',', commaPos + 1) - commaPos - 1);
+	            string storedName = line.substr(line.find(',', commaPos + 1) + 1, line.find(',', line.find(',', commaPos + 1) + 1) - line.find(',', commaPos + 1) - 1);
+	            string storedEmail = line.substr(line.find(',', line.find(',', commaPos + 1) + 1) + 1, line.find(',', line.find(',', line.find(',', commaPos + 1) + 1) + 1) - line.find(',', line.find(',', commaPos + 1) + 1) - 1);
+	            string storedContactNumber = line.substr(line.find(',', line.find(',', line.find(',', commaPos + 1) + 1) + 1) + 1);
+				cout << === User Info === << endl;
+	            cout << "Username: " << username << endl;
+	            cout << "Password: " << storedPassword << endl;
+	            cout << "Name: " << storedName << endl;
+	            cout << "Email: " << storedEmail << endl;
+	            cout << "Contact Number: " << storedContactNumber << endl;
+	
+	            return;
+	        }
 	    }
+	
+	    cout << "User information not found." << endl;
 	}
 
-	cout << "User information not found." << endl;
-    }
+
 };
 
