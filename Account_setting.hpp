@@ -14,33 +14,40 @@ void Account_setting(HotelReservationSystem& sys){
     Account settings;
     system("cls");
     cout << "=== Account Settings ===" << endl;
-    int choice;
-    cout << "1. User Info" << endl;
-    cout << "2. Change Password" << endl;
-    cout << "3. Update Email" << endl;
-    cout << "4. Update Contact Number" << endl;
-    cout << "5. Back" << endl;
-    cout << "0. Exit" << endl;
+    char choice;
+    cout << "[a] User Info" << endl;
+    cout << "[b] Change Password" << endl;
+    cout << "[c] Update Email" << endl;
+    cout << "[d] Update Contact Number" << endl;
+    cout << "[e] Back" << endl;
+    cout << "[f] Exit" << endl;
     cout << "Enter your choice: ";
     cin >> choice;
 
 	switch (choice) {
-        case 1: {
+        case 'a': {
             Account account;
 			string loggedInUser = account.loginUser();
 			system("pause");
 			system("cls");
-			
-			
+
 			if (!loggedInUser.empty()) {
 			    // User logged in successfully
 			    account.printUserInfo(loggedInUser);
+			}
+			cout << endl;
+	            	cout << "[a]Back     [b]Exit: ";
+			cin >> choice;
+			if(choice == 'a'){
+				break;
+			} else if (choice == '0'){
+				exit(0);
 			}
 			system("pause");
             break;
         }
 
-        case 2: {
+        case 'b': {
             string username;
             string currentPassword;
             string newPassword;
@@ -64,7 +71,7 @@ void Account_setting(HotelReservationSystem& sys){
             break;
         }
 
-        case 3: {
+        case 'c': {
             string username;
             string currentPassword;
             string newEmail;
@@ -88,7 +95,7 @@ void Account_setting(HotelReservationSystem& sys){
             break;
         }
 
-        case 4: {
+        case 'd': {
             string username;
             string currentPassword;
             string newContactNumber;
@@ -112,10 +119,10 @@ void Account_setting(HotelReservationSystem& sys){
             break;
         }
 
-        case 5:
+        case 'e':
             return;
         
-        case 0:
+        case'f':
         	exit(0);
 
         default:
