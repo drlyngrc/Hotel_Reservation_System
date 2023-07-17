@@ -9,15 +9,17 @@
 #include "HRS.hpp"
 #include "Account_setting.hpp"
 #include "Sorted_roomprice.hpp"
+#include "ReservationSystem.hpp"
+
 
 using namespace std;
 
 // Function to display the admin menu
 void displayAdminMenu() {
+	
     cout << "=== Admin Menu ===" << endl;
     cout << "[a] Manage reservation schedules" << endl;
-    cout << "[b] Client account management" << endl;
-    cout << "[c] Exit" << endl;
+    cout << "[b] Exit" << endl;
     cout << "Enter your choice: ";
 }
 
@@ -25,7 +27,7 @@ void displayAdminMenu() {
 void displayClientMenu() {
     cout << "=== Client Menu ===" << endl;
     cout << "[a] Room Reservation" << endl;
-    cout << "[b] View bookings" << endl;
+    cout << "[b] Display reservation/s" << endl;
     cout << "[c] Account settings" << endl;
     cout << "[d] Log Out" << endl;
     cout << "[e] Exit" << endl;
@@ -34,7 +36,7 @@ void displayClientMenu() {
 
 void RoomReserve(){
 	cout << "=== Room Reservation ===" << endl;
-    cout << "[a] Choose a schedule" << endl;
+    cout << "[a] Schedule Room Reservation" << endl;
     cout << "[b] View room types and amenities" << endl;
     cout << "[c] Back" << endl;
     cout << "[d] Exit" << endl;
@@ -49,10 +51,9 @@ void Reservation(HotelReservationSystem& sys){
 		cin >> choice;
 		switch(choice){
 			case 'a':
-				//choose a schedule
+				sched();
 				break;
 			case 'b':
-				//view room type
 				char choice;
 				system("cls");
 				displayRoomInformation();
@@ -84,14 +85,35 @@ void AdminMenu(HotelReservationSystem& sys) {
         cin >> choice;
         switch (choice) {
             case 'a':
-                // Your code for managing reservation schedules here
+            	char option;
+            	system("cls");
+                cout << "=== Manage Reservation Schedule === " << endl;
+                cout << "[a] Display reservation/s" << endl;
+                cout << "[b] Mark date as Unavailable" << endl;
+                cout << "[c] Mark date as Available" << endl;
+                cout << "[d] Back" << endl;
+                cout << "Enter your choice: " << endl;
+                cin >> option;
+                switch(option){
+                	case 'a':
+                		Display_reservation();
+                		break;
+                	case 'b':
+                		markDateUnavailableMenu();
+                		break;
+                	case 'c':
+                		markDateAvailableMenu();
+                		break;
+                	case 'd':
+                		cout << "Exiting..." << endl;
+                		break;
+                	default:
+                		cout << "Invalid choice. Please try again." << endl;
+				}
                 break;
             case 'b':
-                // Your code for client account management here
-                break;
-            case 'c':
                 cout << "Exiting..." << endl;
-                break;
+                return;
             default:
                 cout << "Invalid choice. Please try again." << endl;
         }
@@ -109,10 +131,9 @@ void ClientMenu(HotelReservationSystem& sys, const string& loggedInUsername) {
                 Reservation(sys); 
                 break;
             case 'b':
-                // Your code for viewing bookings here
+                Display_reservation();
                 break;
             case 'c':
-                // Your code for account settings here
                 Account_setting(sys, loggedInUsername);
                 break;
             case 'd':
