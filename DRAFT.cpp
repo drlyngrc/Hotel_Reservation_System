@@ -129,7 +129,7 @@ bool isDateUnavailable(int month, int day) {
             string status;
             istringstream iss(line);
             if (iss >> lineMonth >> lineDay >> lineYear >> status) {
-                if (lineMonth == month && lineDay == day && lineYear == 2024 && status == "DATE UNAVAILABLE") {
+                if (lineMonth == month && lineDay == day && lineYear == 2024 && status == "DATE_UNAVAILABLE") {
                     inFile.close();
                     return true;
                 }
@@ -148,7 +148,7 @@ void markDateUnavailable(int month, int day) {
 
     ofstream outFile("unavailable_date.txt", ios::app);
     if (outFile.is_open()) {
-        outFile << month << " " << day << " " << 2024 << " DATE UNAVAILABLE" << endl;
+        outFile << month << " " << day << " " << 2024 << " DATE_UNAVAILABLE" << endl;
         outFile.close();
         cout << "Date marked as unavailable: " << month << "/" << day << endl;
     } else {
@@ -179,14 +179,6 @@ void Roomreserve(int chosenMonth, int chosenFromDate, int chosenToDate) {
         case 'E': {
             int roomIndex = roomreserve_opt[0] - 'A';
             if (roomTypes[roomIndex].count > 0) {
-                // Check if any date within the chosen range is marked as unavailable
-                for (int day = chosenFromDate; day <= chosenToDate; day++) {
-                    if (isDateUnavailable(chosenMonth, day)) {
-                        cout << "At least one date within the chosen range is unavailable. Please select different dates.\n";
-                        return;
-                    }
-                }
-
                 roomTypes[roomIndex].count--;
                 string referenceNumber = generateReferenceNumber();
                 reservations.push_back({roomTypes[roomIndex].type, referenceNumber, chosenMonth, chosenFromDate, chosenToDate, false});
@@ -207,7 +199,7 @@ void Roomreserve(int chosenMonth, int chosenFromDate, int chosenToDate) {
                 int totalAmount = roomTypes[roomIndex].price * numDays ;
 
                 cout << "\nRoom reserved successfully. Reference number: " << referenceNumber << endl;
-                cout << "Total amount: $" << totalAmount << endl;
+                cout << "Total amount: Php" << totalAmount << endl;
             } else {
                 cout << "Sorry, no rooms of this type are available.\n";
             }
@@ -222,7 +214,6 @@ void Roomreserve(int chosenMonth, int chosenFromDate, int chosenToDate) {
             cout << "Invalid entry.\n";
     }
 }
-
 
 void confirmReservation() {
     string referenceNumber;
@@ -365,8 +356,6 @@ void sched() {
         }
     }
 
-    int numDaysStayed = chosenToDate - chosenFromDate;
-
     Roomreserve(chosenMonth, chosenFromDate, chosenToDate);
 }
 
@@ -413,4 +402,3 @@ int main() {
 
     return 0;
 }
-
