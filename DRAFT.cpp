@@ -129,9 +129,9 @@ bool isDateUnavailable(int month, int day) {
             string status;
             istringstream iss(line);
             if (iss >> lineMonth >> lineDay >> lineYear >> status) {
-                if (lineMonth == month && lineDay == day && lineYear == 2024 && status == "DATE_UNAVAILABLE") {
+                if (lineMonth == month && lineDay == day && lineYear == 2024) {
                     inFile.close();
-                    return true;
+                    return (status == "DATE_UNAVAILABLE");
                 }
             }
         }
@@ -151,6 +151,32 @@ void markDateUnavailable(int month, int day) {
         outFile << month << " " << day << " " << 2024 << " DATE_UNAVAILABLE" << endl;
         outFile.close();
         cout << "Date marked as unavailable: " << month << "/" << day << endl;
+    } else {
+        cout << "Unable to open the file for writing." << endl;
+    }
+}
+
+void markDateAvailable(int month, int day) {
+    ifstream inFile("unavailable_date.txt");
+    ofstream outFile("temp.txt");
+    if (inFile.is_open() && outFile.is_open()) {
+        string line;
+        while (getline(inFile, line)) {
+            int lineMonth, lineDay, lineYear;
+            string status;
+            istringstream iss(line);
+            if (iss >> lineMonth >> lineDay >> lineYear >> status) {
+                if (lineMonth == month && lineDay == day && lineYear == 2024 && status == "DATE_UNAVAILABLE") {
+                    continue; // Skip the line if it matches the provided date
+                }
+            }
+            outFile << line << endl; // Write the line to the temporary file
+        }
+        inFile.close();
+        outFile.close();
+        remove("unavailable_date.txt"); // Remove the original file
+        rename("temp.txt", "unavailable_date.txt"); // Rename the temporary file to the original file name
+        cout << "Date marked as available: " << month << "/" << day << endl;
     } else {
         cout << "Unable to open the file for writing." << endl;
     }
@@ -179,6 +205,14 @@ void Roomreserve(int chosenMonth, int chosenFromDate, int chosenToDate) {
         case 'E': {
             int roomIndex = roomreserve_opt[0] - 'A';
             if (roomTypes[roomIndex].count > 0) {
+                // Check if any date within the chosen range is marked as unavailable
+                for (int day = chosenFromDate; day <= chosenToDate; day++) {
+                    if (isDateUnavailable(chosenMonth, day)) {
+                        cout << "At least one date within the chosen range is unavailable. Please select different dates.\n";
+                        return;
+                    }
+                }
+
                 roomTypes[roomIndex].count--;
                 string referenceNumber = generateReferenceNumber();
                 reservations.push_back({roomTypes[roomIndex].type, referenceNumber, chosenMonth, chosenFromDate, chosenToDate, false});
@@ -315,6 +349,34 @@ void markDateUnavailableMenu() {
     markDateUnavailable(chosenMonth, chosenDate);
 }
 
+void markDateAvailableMenu() {
+    Calendar calendar;
+    int chosenMonth, chosenDate;
+
+    cout << "Enter the month number (1-12): ";
+    cin >> chosenMonth;
+
+    if (chosenMonth < 1 || chosenMonth > NUM_MONTHS) {
+        cout << "Invalid month number. Exiting..." << endl;
+        return;
+    }
+
+    int numDays = calendar.getMonthDays(chosenMonth, 2024);
+
+    // Display the calendar for the chosen month
+    calendar.displayMonth(chosenMonth, 2024, 1);
+
+    cout << "Enter the date to mark as available (1-" << numDays << "): ";
+    cin >> chosenDate;
+
+    if (chosenDate < 1 || chosenDate > numDays) {
+        cout << "Invalid date. Exiting..." << endl;
+        return;
+    }
+
+    markDateAvailable(chosenMonth, chosenDate);
+}
+
 void sched() {
     Calendar calendar;
     int chosenMonth, chosenFromDate, chosenToDate;
@@ -356,6 +418,8 @@ void sched() {
         }
     }
 
+    int numDaysStayed = chosenToDate - chosenFromDate;
+
     Roomreserve(chosenMonth, chosenFromDate, chosenToDate);
 }
 
@@ -368,6 +432,7 @@ void maintab() {
     cout << "[c] Exit\n";
     cout << "[d] Confirm a Reservation\n";
     cout << "[e] Mark date as unavailable\n";
+    cout << "[f] Mark date as available\n";
     cout << "Enter your choice: ";
     cin >> maintab_opt;
 
@@ -389,6 +454,9 @@ void maintab() {
             break;
         case 'E':
             markDateUnavailableMenu();
+            break;
+        case 'F':
+            markDateAvailableMenu();
             break;
         default:
             cout << "Invalid entry.\n";
