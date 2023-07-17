@@ -10,7 +10,7 @@
 
 using namespace std;
 
-void Account_setting(HotelReservationSystem& sys,const string& loggedInUsername){
+void Account_setting(HotelReservationSystem& sys, const string& loggedInUsername) {
     Account settings;
     system("cls");
     cout << "=== Account Settings ===" << endl;
@@ -24,39 +24,36 @@ void Account_setting(HotelReservationSystem& sys,const string& loggedInUsername)
     cout << "Enter your choice: ";
     cin >> choice;
 
-	switch (choice) {
+    switch (choice) {
         case 'a': {
-            Account account;
-			system("pause");
-			system("cls");
+            string uname = loggedInUsername;
+            system("pause");
+            system("cls");
 
-			if (!loggedInUser.empty()) {
-			    // User logged in successfully
-			    account.printUserInfo(loggedInUser);
-			}
-			cout << endl;
-	            	cout << "[a]Back     [b]Exit: ";
-			cin >> choice;
-			if(choice == 'a'){
-				break;
-			} else if (choice == '0'){
-				exit(0);
-			}
-			system("pause");
+            if (!loggedInUsername.empty()) {
+                // User logged in successfully
+                settings.printUserInfo(uname);
+            }
+            cout << endl;
+            cout << "[a]Back     [b]Exit: ";
+            cin >> choice;
+            if (choice == 'a') {
+                break;
+            } else if (choice == '0') {
+                exit(0);
+            }
+            system("pause");
             break;
         }
 
         case 'b': {
-            string username;
             string currentPassword;
             string newPassword;
 
-            cout << "Enter username: ";
-            cin >> username;
             cout << "Enter current password: ";
             cin >> currentPassword;
 
-            if (!settings.isCurrentPasswordValid(username, currentPassword)) {
+            if (!settings.isCurrentPasswordValid(loggedInUsername, currentPassword)) {
                 cout << "Incorrect current password." << endl;
                 system("pause");
                 break;
@@ -65,22 +62,19 @@ void Account_setting(HotelReservationSystem& sys,const string& loggedInUsername)
             cout << "Enter new password: ";
             cin >> newPassword;
 
-           settings.changePassword(username, currentPassword, newPassword);
+            settings.changePassword(loggedInUsername, currentPassword, newPassword);
             system("pause");
             break;
         }
 
         case 'c': {
-            string username;
             string currentPassword;
             string newEmail;
 
-            cout << "Enter username: ";
-            cin >> username;
             cout << "Enter current password: ";
             cin >> currentPassword;
 
-            if (!settings.isCurrentPasswordValid(username, currentPassword)) {
+            if (!settings.isCurrentPasswordValid(loggedInUsername, currentPassword)) {
                 cout << "Incorrect current password." << endl;
                 system("pause");
                 break;
@@ -89,22 +83,19 @@ void Account_setting(HotelReservationSystem& sys,const string& loggedInUsername)
             cout << "Enter new email: ";
             cin >> newEmail;
 
-            settings.updateEmail(username, currentPassword, newEmail);
+            settings.updateEmail(loggedInUsername, currentPassword, newEmail);
             system("pause");
             break;
         }
 
         case 'd': {
-            string username;
             string currentPassword;
             string newContactNumber;
 
-            cout << "Enter username: ";
-            cin >> username;
             cout << "Enter current password: ";
             cin >> currentPassword;
 
-            if (!settings.isCurrentPasswordValid(username, currentPassword)) {
+            if (!settings.isCurrentPasswordValid(loggedInUsername, currentPassword)) {
                 cout << "Incorrect current password." << endl;
                 system("pause");
                 break;
@@ -113,16 +104,16 @@ void Account_setting(HotelReservationSystem& sys,const string& loggedInUsername)
             cout << "Enter new contact number: ";
             cin >> newContactNumber;
 
-            settings.updateContactNumber(username, currentPassword, newContactNumber);
+            settings.updateContactNumber(loggedInUsername, currentPassword, newContactNumber);
             system("pause");
             break;
         }
 
         case 'e':
             return;
-        
-        case'f':
-        	exit(0);
+
+        case 'f':
+            exit(0);
 
         default:
             cout << endl << "Invalid Input" << endl;
