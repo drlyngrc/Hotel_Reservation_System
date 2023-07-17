@@ -10,7 +10,7 @@
 
 using namespace std;
 
-void Account_setting(HotelReservationSystem& sys){
+void Account_setting(HotelReservationSystem& sys,const string& loggedInUsername){
     Account settings;
     system("cls");
     cout << "=== Account Settings ===" << endl;
@@ -27,7 +27,6 @@ void Account_setting(HotelReservationSystem& sys){
 	switch (choice) {
         case 'a': {
             Account account;
-			string loggedInUser = account.loginUser();
 			system("pause");
 			system("cls");
 
