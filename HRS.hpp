@@ -21,10 +21,12 @@ struct Client {
 
 // Structure for reservation information
 struct Reservation {
-    int month;
-    int date;
     string roomType;
-    string paymentMethod;
+    string referenceNumber;
+    int month;
+    int fromDate; // Changed date to fromDate to represent the start date of the reservation
+    int toDate; // Added toDate to represent the end date of the reservation
+    bool confirmed;
 };
 
 
@@ -56,43 +58,6 @@ public:
                 current = current->next;
             }
             current->next = newNode;
-        }
-    }
-
-    // Function to display all reservations
-    void displayReservations() {
-        Node* current = head;
-        while (current != nullptr) {
-            // Display reservation details
-            cout << "Month: " << current->reservation.month << endl;
-            cout << "Date: " << current->reservation.date << endl;
-            cout << "Room Type: " << current->reservation.roomType << endl;
-            cout << "Payment Method: " << current->reservation.paymentMethod << endl;
-            cout << endl;
-            
-            current = current->next;
-        }
-    }
-
-    // Function to delete a reservation
-    void deleteReservation(Reservation res) {
-        Node* current = head;
-        Node* prev = nullptr;
-
-        while (current != nullptr) {
-            if (current->reservation.month == res.month && current->reservation.date == res.date &&
-                current->reservation.roomType == res.roomType && current->reservation.paymentMethod == res.paymentMethod) {
-                if (prev == nullptr) {
-                    head = current->next;
-                } else {
-                    prev->next = current->next;
-                }
-                delete current;
-                break;
-            }
-
-            prev = current;
-            current = current->next;
         }
     }
 };
