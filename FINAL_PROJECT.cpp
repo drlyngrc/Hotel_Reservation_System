@@ -98,15 +98,14 @@ void AdminMenu(HotelReservationSystem& sys) {
     } while (choice != 'c');
 }
 
-// Function to handle the main client menu
-void ClientMenu(HotelReservationSystem& sys) {
-    char choice;
+void ClientMenu(HotelReservationSystem& sys, const string& loggedInUsername) {
+    int choice;
     do {
-    	system("cls");
+        system("cls");
         displayClientMenu();
         cin >> choice;
         switch (choice) {
-            case 'a':
+	    case 'a':
                 Reservation(sys); 
                 break;
             case 'b':
@@ -114,7 +113,7 @@ void ClientMenu(HotelReservationSystem& sys) {
                 break;
             case 'c':
                 // Your code for account settings here
-                Account_setting(sys);
+                Account_setting(sys, loggedInUsername);
                 break;
             case 'd':
             	cout << "Logging out..." << endl;
@@ -153,9 +152,10 @@ void showLoginPage(HotelReservationSystem& sys){
                     system("pause");
                     AdminMenu(sys);
                 } else {
+                    //cout << "Logged-in username: " << loggedInUsername << endl;
                     cout << "Logged in successfully." << endl;
-					system("pause");
-                    ClientMenu(sys);
+                    system("pause");
+                    ClientMenu(sys, loggedInUsername); // Pass loggedInUsername to ClientMenu
                 }
             }
             system("pause");
