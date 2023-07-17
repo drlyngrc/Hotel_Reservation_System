@@ -82,12 +82,19 @@ public:
         cin.ignore();
         getline(cin, name);
 
-        cout << "Enter email: ";
-        cin >> email;
-	    if (!isValidEmail(email)) {
-	        cout << "Invalid email format. Please enter a valid email." << endl;
-	        return;
-	    }
+        bool validEmail = false;
+
+		while (!validEmail) {
+		    cout << "Enter email: ";
+		    cin >> email;
+		
+		    if (!isValidEmail(email)) {
+		        cout << "Invalid email format. Please enter a valid email." << endl;
+		    } else {
+		        validEmail = true;
+		    }
+		}
+
 
         bool validContactNumber = false;
         while (!validContactNumber) {
@@ -110,19 +117,24 @@ public:
             }
         }
 
-        cout << "Enter username: ";
-        cin >> username;
+        bool usernameExists = false;
+		
+		while (!usernameExists) {
+		    cout << "Enter username: ";
+		    cin >> username;
+		
+		    if (isUserExists(username)) {
+		        cout << "Username already exists. Please try again." << endl;
+		    } else if (username == "admin") {
+		        cout << "'admin' is restricted as a username. Please try again." << endl;
+		    } else {
+		        cout << "Enter password: ";
+		        cin >> password;
+		        createUser(username, password);
+		        usernameExists = true;
+		    }
+		}
 
-        if (isUserExists(username)) {
-            cout << "Username already exists." << endl;
-        }
-		else if (username == "admin"){
-			cout << "'admin' is restricted as username." << endl;
-		} else {
-            cout << "Enter password: ";
-            cin >> password;
-            createUser(username, password);
-        }
     }
 
     string getMaskedInput() {
@@ -299,7 +311,7 @@ public:
 	            string storedName = line.substr(line.find(',', commaPos + 1) + 1, line.find(',', line.find(',', commaPos + 1) + 1) - line.find(',', commaPos + 1) - 1);
 	            string storedEmail = line.substr(line.find(',', line.find(',', commaPos + 1) + 1) + 1, line.find(',', line.find(',', line.find(',', commaPos + 1) + 1) + 1) - line.find(',', line.find(',', commaPos + 1) + 1) - 1);
 	            string storedContactNumber = line.substr(line.find(',', line.find(',', line.find(',', commaPos + 1) + 1) + 1) + 1);
-				cout << === User Info === << endl;
+				cout << "=== User Info ===" << endl;
 	            cout << "Username: " << username << endl;
 	            cout << "Password: " << storedPassword << endl;
 	            cout << "Name: " << storedName << endl;
