@@ -1,4 +1,4 @@
-#define MAIN_HPP
+#define HRS_HPP
 
 #include <iostream>
 #include <string>
