@@ -311,9 +311,8 @@ public:
 	            string storedName = line.substr(line.find(',', commaPos + 1) + 1, line.find(',', line.find(',', commaPos + 1) + 1) - line.find(',', commaPos + 1) - 1);
 	            string storedEmail = line.substr(line.find(',', line.find(',', commaPos + 1) + 1) + 1, line.find(',', line.find(',', line.find(',', commaPos + 1) + 1) + 1) - line.find(',', line.find(',', commaPos + 1) + 1) - 1);
 	            string storedContactNumber = line.substr(line.find(',', line.find(',', line.find(',', commaPos + 1) + 1) + 1) + 1);
-				cout << "=== User Info ===" << endl;
+				cout << "=== User Info ===" << endl << endl;
 	            cout << "Username: " << username << endl;
-	            cout << "Password: " << storedPassword << endl;
 	            cout << "Name: " << storedName << endl;
 	            cout << "Email: " << storedEmail << endl;
 	            cout << "Contact Number: " << storedContactNumber << endl;
