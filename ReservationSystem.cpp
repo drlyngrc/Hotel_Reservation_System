@@ -1,3 +1,5 @@
+#define RESERVATIONSYSTEM_HPP
+
 #include <iostream>
 #include <vector>
 #include <cstdlib>
