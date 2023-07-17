@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <sstream>
 #include "Account.hpp"
-#include "Main.hpp"
+#include "Reservations.hpp"
 #include "Account_setting.hpp"
 #include "Sorted_roomprice.hpp"
 
@@ -99,7 +99,7 @@ void AdminMenu(HotelReservationSystem& sys) {
 }
 
 void ClientMenu(HotelReservationSystem& sys, const string& loggedInUsername) {
-    int choice;
+    char choice;
     do {
         system("cls");
         displayClientMenu();
