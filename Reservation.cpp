@@ -104,6 +104,49 @@ vector<RoomType> roomTypes = {
 
 vector<Reservation> reservations;
 
+void saveReservationsToFile() {
+    ofstream outFile("reservations.txt");
+    if (outFile.is_open()) {
+        for (const Reservation& reservation : reservations) {
+            outFile << reservation.roomType << "," << reservation.referenceNumber << ","
+                    << reservation.month << "," << reservation.fromDate << ","
+                    << reservation.toDate << "," << reservation.confirmed << endl;
+        }
+        outFile.close();
+        cout << "Reservations saved successfully." << endl;
+    } else {
+        cout << "Unable to open the file for writing." << endl;
+    }
+}
+
+// Function to load reservations from a file
+void loadReservationsFromFile() {
+    ifstream inFile("reservations.txt");
+    if (inFile.is_open()) {
+        reservations.clear();
+        string line;
+        while (getline(inFile, line)) {
+            istringstream iss(line);
+            string roomType, referenceNumber, confirmedStr;
+            int month, fromDate, toDate;
+            bool confirmed;
+            if (getline(iss, roomType, ',') &&
+                getline(iss, referenceNumber, ',') &&
+                (iss >> month) && (iss.ignore()) &&
+                (iss >> fromDate) && (iss.ignore()) &&
+                (iss >> toDate) && (iss.ignore()) &&
+                getline(iss, confirmedStr)) {
+                confirmed = (confirmedStr == "1");
+                reservations.push_back({roomType, referenceNumber, month, fromDate, toDate, confirmed});
+            }
+        }
+        inFile.close();
+        cout << "Reservations loaded successfully." << endl;
+    } else {
+        cout << "Unable to open the file for reading." << endl;
+    }
+}
+
 string generateReferenceNumber() {
     string referenceNumber;
     static const char alphanumeric[] =
@@ -464,8 +507,11 @@ void maintab() {
 }
 
 int main() {
+    loadReservationsFromFile();
+
     while (true) {
         maintab();
+        saveReservationsToFile();
     }
 
     return 0;
