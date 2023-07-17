@@ -85,14 +85,7 @@ struct RoomType {
     int price; // Added the price field for each room type
 };
 
-struct Reservation {
-    string roomType;
-    string referenceNumber;
-    int month;
-    int fromDate; // Changed date to fromDate to represent the start date of the reservation
-    int toDate; // Added toDate to represent the end date of the reservation
-    bool confirmed;
-};
+
 
 vector<RoomType> roomTypes = {
     {"Standard Room", 15, 5000},
@@ -275,8 +268,8 @@ void Roomreserve(int chosenMonth, int chosenFromDate, int chosenToDate) {
                 }
                 int totalAmount = roomTypes[roomIndex].price * numDays ;
 
-                cout << "\nRoom reserved successfully. Reference number: " << referenceNumber << endl;
-                cout << "Total amount: Php" << totalAmount << endl;
+                cout << "\nRoom reserved successfully. \nReference number: " << referenceNumber << endl;
+                cout << "Total amount: Php " << totalAmount << endl;
             } else {
                 cout << "Sorry, no rooms of this type are available.\n";
             }
@@ -301,7 +294,7 @@ void confirmReservation() {
     for (Reservation& reservation : reservations) {
         if (reservation.referenceNumber == referenceNumber) {
             reservationFound = true;
-            // Update the reservation status to "Confirmed"
+            cout << "Reservation Confirmed!" << endl;
             reservation.confirmed = true;
             break;
         }
@@ -312,7 +305,7 @@ void confirmReservation() {
     }
 }
 
-void cancelReservation() {
+void deleteReservation() {
     string referenceNumber;
     cout << "Enter the reference number of the reservation to cancel: ";
     cin >> referenceNumber;
@@ -322,7 +315,7 @@ void cancelReservation() {
         if (reservations[i].referenceNumber == referenceNumber) {
             reservationFound = true;
             reservations.erase(reservations.begin() + i);
-            cout << "Reservation successfully canceled.\n";
+            cout << "Reservation successfully cancelled.\n";
             break;
         }
     }
@@ -333,7 +326,7 @@ void cancelReservation() {
 }
 
 void Display_reservation() {
-    cout << "\nMY RESERVATIONS:\n";
+     cout << "\nRESERVATIONS:\n";
     for (int i = 0; i < reservations.size(); i++) {
         Reservation reservation = reservations[i];
         cout << "[" << (i + 1) << "] " << reservation.roomType << " (Date booked: " << reservation.month << "/" << reservation.fromDate << "-" << reservation.toDate << ", Reference number: " << reservation.referenceNumber << ")";
@@ -341,53 +334,64 @@ void Display_reservation() {
     }
 
     string display_opt;
-    cout << "\n[a] Cancel reservation\n";
-    cout << "[b] Back\n";
-    cout << "[c] Exit\n";
-    cout << "Enter your choice: ";
-    cin >> display_opt;
-
-    // Convert the input to uppercase
-    transform(display_opt.begin(), display_opt.end(), display_opt.begin(), ::toupper);
-
-    switch (display_opt[0]) {
-        case 'A':
-            cancelReservation();
-            break;
-        case 'B':
-            return;
-        case 'C':
-            cout << "Thank you for using the Reservation System. Goodbye!\n";
-            exit(0);
-        default:
-            cout << "Invalid entry.\n";
-    }
+    do{
+    	cout << "\n[a] Cancel reservation\n";
+    	cout << "[b] Confirm Reservation" << endl;
+	    cout << "[c] Back\n";
+	    cout << "[d] Exit\n";
+	    cout << "Enter your choice: ";
+	    cin >> display_opt;
+	
+	    // Convert the input to uppercase
+	    transform(display_opt.begin(), display_opt.end(), display_opt.begin(), ::toupper);
+	
+	    switch (display_opt[0]) {
+	    	case 'A':
+	    		deleteReservation();
+	    		break;
+	        case 'B':
+	            confirmReservation();
+	            break;
+	        case 'C':
+	            return;
+	        case 'D':
+	            break;
+	        default:
+	            cout << "Invalid entry.\n";
+	    }
+	} while(display_opt[0] != 'D');
 }
 
 void markDateUnavailableMenu() {
     Calendar calendar;
     int chosenMonth, chosenDate;
 
-    cout << "Enter the month number (1-12): ";
-    cin >> chosenMonth;
-
-    if (chosenMonth < 1 || chosenMonth > NUM_MONTHS) {
-        cout << "Invalid month number. Exiting..." << endl;
-        return;
-    }
+    while(true){
+    	cout << "Enter the month number (1-12): ";
+	    cin >> chosenMonth;
+	
+	    if (chosenMonth < 1 || chosenMonth > NUM_MONTHS) {
+	        cout << "Invalid month number." << endl;
+	    } else {
+	    	break;
+		}
+	}
 
     int numDays = calendar.getMonthDays(chosenMonth, 2024);
 
     // Display the calendar for the chosen month
     calendar.displayMonth(chosenMonth, 2024, 1);
 
-    cout << "Enter the date to mark as unavailable (1-" << numDays << "): ";
-    cin >> chosenDate;
-
-    if (chosenDate < 1 || chosenDate > numDays) {
-        cout << "Invalid date. Exiting..." << endl;
-        return;
-    }
+    while(true){
+    	cout << "Enter the date to mark as unavailable (1-" << numDays << "): ";
+	    cin >> chosenDate;
+	
+	    if (chosenDate < 1 || chosenDate > numDays) {
+	        cout << "Invalid date." << endl;
+	    } else {
+	    	break;
+		}
+	}
 
     markDateUnavailable(chosenMonth, chosenDate);
 }
@@ -396,26 +400,32 @@ void markDateAvailableMenu() {
     Calendar calendar;
     int chosenMonth, chosenDate;
 
-    cout << "Enter the month number (1-12): ";
-    cin >> chosenMonth;
-
-    if (chosenMonth < 1 || chosenMonth > NUM_MONTHS) {
-        cout << "Invalid month number. Exiting..." << endl;
-        return;
-    }
+    while(true){
+    	cout << "Enter the month number (1-12): ";
+	    cin >> chosenMonth;
+	
+	    if (chosenMonth < 1 || chosenMonth > NUM_MONTHS) {
+	        cout << "Invalid month number." << endl;
+	    } else {
+	    	break;
+		}
+	}
 
     int numDays = calendar.getMonthDays(chosenMonth, 2024);
 
     // Display the calendar for the chosen month
     calendar.displayMonth(chosenMonth, 2024, 1);
 
-    cout << "Enter the date to mark as available (1-" << numDays << "): ";
-    cin >> chosenDate;
-
-    if (chosenDate < 1 || chosenDate > numDays) {
-        cout << "Invalid date. Exiting..." << endl;
-        return;
-    }
+    while(true){
+    	cout << "Enter the date to mark as available (1-" << numDays << "): ";
+	    cin >> chosenDate;
+	
+	    if (chosenDate < 1 || chosenDate > numDays) {
+	        cout << "Invalid date." << endl;
+	    } else {
+	    	break;
+		}
+	}
 
     markDateAvailable(chosenMonth, chosenDate);
 }
@@ -424,34 +434,43 @@ void sched() {
     Calendar calendar;
     int chosenMonth, chosenFromDate, chosenToDate;
 
-    cout << "Enter the month number (1-12): ";
-    cin >> chosenMonth;
-
-    if (chosenMonth < 1 || chosenMonth > NUM_MONTHS) {
-        cout << "Invalid month number. Exiting..." << endl;
-        return;
-    }
+    while(true){
+    	cout << "Enter the month number (1-12): ";
+	    cin >> chosenMonth;
+	
+	    if (chosenMonth < 1 || chosenMonth > NUM_MONTHS) {
+	        cout << "Invalid month number." << endl;
+	    } else {
+	    	break;
+		}
+	}
 
     int numDays = calendar.getMonthDays(chosenMonth, 2024);
 
     // Display the calendar for the chosen month
     calendar.displayMonth(chosenMonth, 2024, 1);
 
-    cout << "Enter the starting date (1-" << numDays << "): ";
-    cin >> chosenFromDate;
+    while(true){
+    	cout << "Enter the starting date (1-" << numDays << "): ";
+	    cin >> chosenFromDate;
+	
+	    if (chosenFromDate < 1 || chosenFromDate > numDays) {
+	        cout << "Invalid date." << endl;
+	    } else {
+	    	break;
+		}
+	}
 
-    if (chosenFromDate < 1 || chosenFromDate > numDays) {
-        cout << "Invalid date. Exiting..." << endl;
-        return;
-    }
-
-    cout << "Enter the ending date (1-" << numDays << "): ";
-    cin >> chosenToDate;
-
-    if (chosenToDate < chosenFromDate || chosenToDate > numDays) {
-        cout << "Invalid date. Exiting..." << endl;
-        return;
-    }
+    while(true){
+    	cout << "Enter the ending date (1-" << numDays << "): ";
+	    cin >> chosenToDate;
+	
+	    if (chosenToDate < chosenFromDate || chosenToDate > numDays) {
+	        cout << "Invalid date." << endl;
+	    } else {
+	    	break;
+		}
+	}
 
     // Check if any date within the chosen range is marked as unavailable
     for (int day = chosenFromDate; day <= chosenToDate; day++) {
@@ -464,49 +483,52 @@ void sched() {
     int numDaysStayed = chosenToDate - chosenFromDate;
 
     Roomreserve(chosenMonth, chosenFromDate, chosenToDate);
+    cout << endl;
+    system("pause");
 }
 
 void maintab() {
     char maintab_opt;
     cout << endl;
-    cout << "Reservation System\n";
-    cout << "[a] Schedule room reservation\n";
-    cout << "[b] Display reservation(s)\n";
-    cout << "[c] Exit\n";
-    cout << "[d] Confirm a Reservation\n";
-    cout << "[e] Mark date as unavailable\n";
-    cout << "[f] Mark date as available\n";
-    cout << "Enter your choice: ";
-    cin >> maintab_opt;
-
-    // Convert the input to uppercase
-    maintab_opt = toupper(maintab_opt);
-
-    switch (maintab_opt) {
-        case 'A':
-            sched();
-            break;
-        case 'B':
-            Display_reservation();
-            break;
-        case 'C':
-            cout << "Thank you for using the Reservation System. Goodbye!\n";
-            exit(0);
-        case 'D':
-            confirmReservation();
-            break;
-        case 'E':
-            markDateUnavailableMenu();
-            break;
-        case 'F':
-            markDateAvailableMenu();
-            break;
-        default:
-            cout << "Invalid entry.\n";
-    }
+    do{
+    	cout << "Reservation System\n";
+	    cout << "[a] Schedule room reservation\n";
+	    cout << "[b] Display reservation(s)\n";
+	    cout << "[c] Exit\n";
+	    cout << "[d] Confirm a Reservation\n";
+	    cout << "[e] Mark date as unavailable\n";
+	    cout << "[f] Mark date as available\n";
+	    cout << "Enter your choice: ";
+	    cin >> maintab_opt;
+	
+	    // Convert the input to uppercase
+	    maintab_opt = toupper(maintab_opt);
+	
+	    switch (maintab_opt) {
+	        case 'A':
+	            sched();
+	            break;
+	        case 'B':
+	            Display_reservation();
+	            break;
+	        case 'C':
+	            return;
+	        case 'D':
+	            confirmReservation();
+	            break;
+	        case 'E':
+	            markDateUnavailableMenu();
+	            break;
+	        case 'F':
+	            markDateAvailableMenu();
+	            break;
+	        default:
+	            cout << "Invalid entry.\n";
+	    }
+	}while(maintab_opt != 'F');
 }
 
-int main() {
+/*int main() {
     loadReservationsFromFile();
 
     while (true) {
@@ -515,4 +537,4 @@ int main() {
     }
 
     return 0;
-}
+} */
