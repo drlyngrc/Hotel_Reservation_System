@@ -244,6 +244,26 @@ void confirmReservation() {
     }
 }
 
+void cancelReservation() {
+    string referenceNumber;
+    cout << "Enter the reference number of the reservation to cancel: ";
+    cin >> referenceNumber;
+
+    bool reservationFound = false;
+    for (int i = 0; i < reservations.size(); i++) {
+        if (reservations[i].referenceNumber == referenceNumber) {
+            reservationFound = true;
+            reservations.erase(reservations.begin() + i);
+            cout << "Reservation successfully canceled.\n";
+            break;
+        }
+    }
+
+    if (!reservationFound) {
+        cout << "Invalid reference number. Reservation not found.\n";
+    }
+}
+
 void Display_reservation() {
     cout << "\nMY RESERVATIONS:\n";
     for (int i = 0; i < reservations.size(); i++) {
@@ -264,7 +284,7 @@ void Display_reservation() {
 
     switch (display_opt[0]) {
         case 'A':
-            // Cancel reservation
+            cancelReservation();
             break;
         case 'B':
             return;
