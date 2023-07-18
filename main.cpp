@@ -96,7 +96,7 @@ void AdminMenu(HotelReservationSystem& sys) {
                 cin >> option;
                 switch(option){
                 	case 'a':
-                		Display_reservation();
+                		Display_reservation_admin();
                 		break;
                 	case 'b':
                 		markDateUnavailableMenu();
@@ -124,6 +124,7 @@ void ClientMenu(HotelReservationSystem& sys, const string& loggedInUsername) {
     char choice;
     do {
         system("cls");
+        loadReservationsFromFile();
         displayClientMenu();
         cin >> choice;
         switch (choice) {
@@ -131,7 +132,7 @@ void ClientMenu(HotelReservationSystem& sys, const string& loggedInUsername) {
                 Reservation(sys); 
                 break;
             case 'b':
-                Display_reservation();
+                Display_reservation_client();
                 break;
             case 'c':
                 Account_setting(sys, loggedInUsername);
@@ -145,6 +146,7 @@ void ClientMenu(HotelReservationSystem& sys, const string& loggedInUsername) {
             default:
                 cout << "Invalid choice. Please try again." << endl;
         }
+        saveReservationsToFile();
     } while (choice != 'd');
 }
 
