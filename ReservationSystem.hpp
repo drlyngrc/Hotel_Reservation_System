@@ -327,7 +327,7 @@ void deleteReservation() {
     }
 }
 
-void Display_reservation() {
+void Display_reservation_admin() {
      cout << "\nRESERVATIONS:\n";
     for (int i = 0; i < reservations.size(); i++) {
         Reservation reservation = reservations[i];
@@ -337,7 +337,7 @@ void Display_reservation() {
 
     string display_opt;
     do{
-    	cout << "\n[a] Cancel reservation\n";
+    	cout << "\n[a] Delete reservation\n";
     	cout << "[b] Confirm Reservation" << endl;
 	    cout << "[c] Back\n";
 	    cout << "[d] Exit\n";
@@ -362,6 +362,39 @@ void Display_reservation() {
 	            cout << "Invalid entry.\n";
 	    }
 	} while(display_opt[0] != 'D');
+}
+
+void Display_reservation_client() {
+     cout << "\nRESERVATIONS:\n";
+    for (int i = 0; i < reservations.size(); i++) {
+        Reservation reservation = reservations[i];
+        cout << "[" << (i + 1) << "] " << reservation.roomType << " (Date booked: " << reservation.month << "/" << reservation.fromDate << "-" << reservation.toDate << ", Reference number: " << reservation.referenceNumber << ")";
+        cout << "  Status: " << (reservation.confirmed ? "CONFIRMED" : "PENDING") << endl;
+    }
+
+    string display_opt;
+    do{
+    	cout << "\n[a] Cancel reservation\n";
+	    cout << "[b] Back\n";
+	    cout << "[c] Exit\n";
+	    cout << "Enter your choice: ";
+	    cin >> display_opt;
+	
+	    // Convert the input to uppercase
+	    transform(display_opt.begin(), display_opt.end(), display_opt.begin(), ::toupper);
+	
+	    switch (display_opt[0]) {
+	    	case 'A':
+	    		deleteReservation();
+	    		break;
+	        case 'B':
+	            return;
+	        case 'C':
+	            break;
+	        default:
+	            cout << "Invalid entry.\n";
+	    }
+	} while(display_opt[0] != 'C');
 }
 
 void markDateUnavailableMenu() {
@@ -488,55 +521,3 @@ void sched() {
     cout << endl;
     system("pause");
 }
-
-void maintab() {
-    char maintab_opt;
-    cout << endl;
-    do{
-    	cout << "Reservation System\n";
-	    cout << "[a] Schedule room reservation\n";
-	    cout << "[b] Display reservation(s)\n";
-	    cout << "[c] Exit\n";
-	    cout << "[d] Confirm a Reservation\n";
-	    cout << "[e] Mark date as unavailable\n";
-	    cout << "[f] Mark date as available\n";
-	    cout << "Enter your choice: ";
-	    cin >> maintab_opt;
-	
-	    // Convert the input to uppercase
-	    maintab_opt = toupper(maintab_opt);
-	
-	    switch (maintab_opt) {
-	        case 'A':
-	            sched();
-	            break;
-	        case 'B':
-	            Display_reservation();
-	            break;
-	        case 'C':
-	            return;
-	        case 'D':
-	            confirmReservation();
-	            break;
-	        case 'E':
-	            markDateUnavailableMenu();
-	            break;
-	        case 'F':
-	            markDateAvailableMenu();
-	            break;
-	        default:
-	            cout << "Invalid entry.\n";
-	    }
-	}while(maintab_opt != 'F');
-}
-
-/*int main() {
-    loadReservationsFromFile();
-
-    while (true) {
-        maintab();
-        saveReservationsToFile();
-    }
-
-    return 0;
-} */
