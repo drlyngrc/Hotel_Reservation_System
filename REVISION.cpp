@@ -267,7 +267,7 @@ void confirmSelectedReservation() {
             // Call DisplayRoomAvailability to check the number of available rooms
             int chosenMonth = reservation.month;
             int chosenFromDate = reservation.fromDate; 
-            //DisplayRoomAvailability(chosenMonth, chosenFromDate);
+            // DisplayRoomAvailability(chosenMonth, chosenFromDate);
 
             // Check if the rooms are available for the reservation dates
             int chosenToDate = reservation.toDate;
