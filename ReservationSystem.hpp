@@ -360,10 +360,10 @@ void deleteReservation() {
 }
 
 void Display_reservation_admin() {
-    cout << "\nMY RESERVATIONS:\n";
+    cout << "\nList of RESERVATIONS:\n\n";
     for (int i = 0; i < reservations.size(); i++) {
         Reservation reservation = reservations[i];
-        cout << "[" << (i + 1) << "] " << reservation.roomType << " (Date booked: " << reservation.month << "/" << reservation.fromDate << "-" << reservation.toDate << ", Reference number: " << reservation.referenceNumber << ")";
+        cout << "[" << (i + 1) << "] " << "[Username: " << reservation.loggedInUsername << "] " << "[Room Type: " << reservation.roomType << "] " << " (Date booked: " << reservation.month << "/" << reservation.fromDate << "-" << reservation.toDate << ", Reference number: " << reservation.referenceNumber << ")";
         cout << "  Status: " << (reservation.confirmed ? "CONFIRMED" : "PENDING") << endl;
     }
 
@@ -473,7 +473,7 @@ void sched(const string& loggedInUsername) {
         cout << "Enter the ending date (1-" << numDays << "): ";
         cin >> chosenToDate;
 
-        if (chosenToDate < chosenFromDate || chosenToDate > numDays) {
+        if (chosenToDate <= chosenFromDate || chosenToDate > numDays) {
             cout << "Invalid date." << endl;
         } else {
             break;
