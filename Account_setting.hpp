@@ -27,7 +27,6 @@ void Account_setting(HotelReservationSystem& sys, const string& loggedInUsername
     switch (choice) {
         case 'a': {
             string uname = loggedInUsername;
-            system("pause");
             system("cls");
 
             if (!loggedInUsername.empty()) {
@@ -42,7 +41,6 @@ void Account_setting(HotelReservationSystem& sys, const string& loggedInUsername
             } else if (choice == '0') {
                 exit(0);
             }
-            system("pause");
             break;
         }
 
@@ -55,7 +53,6 @@ void Account_setting(HotelReservationSystem& sys, const string& loggedInUsername
 
             if (!settings.isCurrentPasswordValid(loggedInUsername, currentPassword)) {
                 cout << "Incorrect current password." << endl;
-                system("pause");
                 break;
             }
 
@@ -63,7 +60,6 @@ void Account_setting(HotelReservationSystem& sys, const string& loggedInUsername
             cin >> newPassword;
 
             settings.changePassword(loggedInUsername, currentPassword, newPassword);
-            system("pause");
             break;
         }
 
@@ -76,7 +72,6 @@ void Account_setting(HotelReservationSystem& sys, const string& loggedInUsername
 
             if (!settings.isCurrentPasswordValid(loggedInUsername, currentPassword)) {
                 cout << "Incorrect current password." << endl;
-                system("pause");
                 break;
             }
 
@@ -84,7 +79,6 @@ void Account_setting(HotelReservationSystem& sys, const string& loggedInUsername
             cin >> newEmail;
 
             settings.updateEmail(loggedInUsername, currentPassword, newEmail);
-            system("pause");
             break;
         }
 
@@ -105,7 +99,6 @@ void Account_setting(HotelReservationSystem& sys, const string& loggedInUsername
             cin >> newContactNumber;
 
             settings.updateContactNumber(loggedInUsername, currentPassword, newContactNumber);
-            system("pause");
             break;
         }
 
@@ -117,7 +110,6 @@ void Account_setting(HotelReservationSystem& sys, const string& loggedInUsername
 
         default:
             cout << endl << "Invalid Input" << endl;
-            system("pause");
             break;
     }
 }
