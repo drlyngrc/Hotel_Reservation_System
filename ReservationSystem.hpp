@@ -16,13 +16,16 @@ void confirmSelectedReservation();
 void Roomreserve(int chosenMonth, int chosenFromDate, int chosenToDate);
 void confirmSelectedReservation();
 void cancelReservation();
-void Display_reservation() ;
-void sched();
+void Display_reservation(const string& loggedInUsername);
+void sched(const string& loggedInUsername);
+void displayRoomInformation();
 void DisplayRoomAvailability(int chosenMonth, int chosenFromDate) ;
-
+string generateReferenceNumber();
 
 const int NUM_MONTHS = 12;
 const int NUM_DAYS_PER_WEEK = 7;
+
+
 
 class Calendar {
 private:
@@ -122,88 +125,7 @@ vector<RoomType> roomTypes = {
 
 vector<Reservation> reservations;
 
-
-void saveReservationsToFile() {
-    ofstream outFile("reservations.txt");
-    if (outFile.is_open()) {
-        for (const Reservation& reservation : reservations) {
-            outFile << reservation.roomType << "," << reservation.referenceNumber << ","
-                    << reservation.month << "," << reservation.fromDate << ","
-                    << reservation.toDate << "," << reservation.confirmed << endl;
-        }
-        outFile.close();
-        cout << "Reservations saved successfully." << endl;
-    } else {
-        cout << "Unable to open the file for writing." << endl;
-    }
-}
-
-// Function to load reservations from a file
-void loadReservationsFromFile() {
-    ifstream inFile("reservations.txt");
-    if (inFile.is_open()) {
-        reservations.clear();
-        string line;
-        while (getline(inFile, line)) {
-            istringstream iss(line);
-            string roomType, referenceNumber, confirmedStr;
-            int month, fromDate, toDate;
-            bool confirmed;
-            if (getline(iss, roomType, ',') &&
-                getline(iss, referenceNumber, ',') &&
-                (iss >> month) && (iss.ignore()) &&
-                (iss >> fromDate) && (iss.ignore()) &&
-                (iss >> toDate) && (iss.ignore()) &&
-                getline(iss, confirmedStr)) {
-                confirmed = (confirmedStr == "1");
-                reservations.push_back({roomType, referenceNumber, month, fromDate, toDate, confirmed});
-            }
-        }
-        inFile.close();
-        cout << "Reservations loaded successfully." << endl;
-    } else {
-        cout << "Unable to open the file for reading." << endl;
-    }
-}
-
-string generateReferenceNumber() {
-    string referenceNumber;
-    static const char alphanumeric[] =
-        "0123456789"
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        "abcdefghijklmnopqrstuvwxyz";
-    const int alphanumericLength = sizeof(alphanumeric) - 1;
-
-    srand(time(0));
-    for (int i = 0; i < 6; i++) {
-        referenceNumber += alphanumeric[rand() % alphanumericLength];
-    }
-
-    return referenceNumber;
-}
-
-// Global variable to hold the chosen month
-int chosenMonth, chosenFromDate, chosenToDate;
-vector<vector<RoomType>> roomTypesByMonth(NUM_MONTHS, vector<RoomType>());
-
-
-void initializeRoomAvailability(int chosenMonth) {
-    // Check if the roomTypes for the chosen month are already initialized
-    if (roomTypesByMonth[chosenMonth - 1].empty()) {
-        // Initialize the availability vectors for each room type for the chosen month
-        for (RoomType& roomType : roomTypes) {
-            roomType.availabilityByMonth[chosenMonth - 1].availability = vector<int>(calendar.getMonthDays(chosenMonth, 2024), roomType.availabilityByMonth[chosenMonth - 1].count);
-        }
-        // Add the roomTypes for the chosen month to the nested vector
-        roomTypesByMonth[chosenMonth - 1] = roomTypes;
-    } else {
-        // If the roomTypes for the chosen month are already initialized,
-        // copy them back to the original roomTypes vector to avoid duplication.
-        roomTypes = roomTypesByMonth[chosenMonth - 1];
-    }
-}
-
-void Roomreserve(int chosenMonth, int chosenFromDate, int chosenToDate) {
+void Roomreserve(int chosenMonth, int chosenFromDate, int chosenToDate, const string& loggedInUsername) {
     string roomreserve_opt;
     cout << endl;
     cout << "Please select your preferred room type:\n";
@@ -245,11 +167,11 @@ void Roomreserve(int chosenMonth, int chosenFromDate, int chosenToDate) {
 
     if (roomTypes[roomIndex].availabilityByMonth[chosenMonth - 1].availability[chosenFromDate - 1] > 0) {
         string referenceNumber = generateReferenceNumber();
-        reservations.push_back({roomTypes[roomIndex].type, referenceNumber, chosenMonth, chosenFromDate, chosenToDate, false});
+        reservations.push_back({roomTypes[roomIndex].type, referenceNumber, chosenMonth, chosenFromDate, chosenToDate, false, loggedInUsername});
         // Store the reservation details in unavailable_date.txt
-        ofstream outFile("unavailable_date.txt", ios::app);
+        ofstream outFile("reservations.txt", ios::app);
         if (outFile.is_open()) {
-            outFile << chosenMonth << " " << chosenFromDate << " " << chosenToDate << " 2024 " << referenceNumber << endl;
+            outFile << chosenMonth << " " << chosenFromDate << " " << chosenToDate << " 2024 " << referenceNumber << " " << loggedInUsername << endl;
             outFile.close();
         } else {
             cout << "Unable to open the file for writing." << endl;
@@ -269,6 +191,88 @@ void Roomreserve(int chosenMonth, int chosenFromDate, int chosenToDate) {
 
     } else {
         cout << "Sorry, no rooms of this type are available.\n";
+    }
+}
+
+void saveReservationsToFile() {
+    ofstream outFile("reservations.txt");
+    if (outFile.is_open()) {
+        for (const Reservation& reservation : reservations) {
+            outFile << reservation.roomType << "," << reservation.referenceNumber << ","
+                    << reservation.month << "," << reservation.fromDate << ","
+                    << reservation.toDate << "," << reservation.confirmed << "," << reservation.loggedInUsername << endl;
+        }
+        outFile.close();
+        cout << "Reservations saved successfully." << endl;
+    } else {
+        cout << "Unable to open the file for writing." << endl;
+    }
+}
+
+// Function to load reservations from a file
+void loadReservationsFromFile() {
+    ifstream inFile("reservations.txt");
+    if (inFile.is_open()) {
+        reservations.clear();
+        string line;
+        while (getline(inFile, line)) {
+            istringstream iss(line);
+            string roomType, referenceNumber, loggedInUsername, confirmedStr;
+            int month, fromDate, toDate;
+            bool confirmed;
+            if (getline(iss, roomType, ',') &&
+                getline(iss, referenceNumber, ',') &&
+                (iss >> month) && (iss.ignore()) &&
+                (iss >> fromDate) && (iss.ignore()) &&
+                (iss >> toDate) && (iss.ignore()) &&
+                getline(iss, confirmedStr, ',') &&
+                getline(iss, loggedInUsername)) {
+                confirmed = (confirmedStr == "1");
+                reservations.push_back({roomType, referenceNumber, month, fromDate, toDate, confirmed, loggedInUsername});
+            }
+        }
+        inFile.close();
+        cout << "Reservations loaded successfully." << endl;
+    } else {
+        cout << "Unable to open the file for reading." << endl;
+    }
+}
+
+
+string generateReferenceNumber() {
+    string referenceNumber;
+    static const char alphanumeric[] =
+        "0123456789"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        "abcdefghijklmnopqrstuvwxyz";
+    const int alphanumericLength = sizeof(alphanumeric) - 1;
+
+    srand(time(0));
+    for (int i = 0; i < 6; i++) {
+        referenceNumber += alphanumeric[rand() % alphanumericLength];
+    }
+
+    return referenceNumber;
+}
+
+// Global variable to hold the chosen month
+int chosenMonth, chosenFromDate, chosenToDate;
+vector<vector<RoomType>> roomTypesByMonth(NUM_MONTHS, vector<RoomType>());
+
+
+void initializeRoomAvailability(int chosenMonth) {
+    // Check if the roomTypes for the chosen month are already initialized
+    if (roomTypesByMonth[chosenMonth - 1].empty()) {
+        // Initialize the availability vectors for each room type for the chosen month
+        for (RoomType& roomType : roomTypes) {
+            roomType.availabilityByMonth[chosenMonth - 1].availability = vector<int>(calendar.getMonthDays(chosenMonth, 2024), roomType.availabilityByMonth[chosenMonth - 1].count);
+        }
+        // Add the roomTypes for the chosen month to the nested vector
+        roomTypesByMonth[chosenMonth - 1] = roomTypes;
+    } else {
+        // If the roomTypes for the chosen month are already initialized,
+        // copy them back to the original roomTypes vector to avoid duplication.
+        roomTypes = roomTypesByMonth[chosenMonth - 1];
     }
 }
 
@@ -355,7 +359,7 @@ void deleteReservation() {
     }
 }
 
-void Display_reservation() {
+void Display_reservation_admin() {
     cout << "\nMY RESERVATIONS:\n";
     for (int i = 0; i < reservations.size(); i++) {
         Reservation reservation = reservations[i];
@@ -388,51 +392,97 @@ void Display_reservation() {
     }
 }
 
-void sched() {
+void Display_reservation_client(const string& loggedInUsername) {
+    cout << "\nMY RESERVATIONS:\n";
+    int reservationCount = 0;
+
+    for (int i = 0; i < reservations.size(); i++) {
+        Reservation reservation = reservations[i];
+        if (reservation.loggedInUsername == loggedInUsername) {
+            reservationCount++;
+            cout << "[" << reservationCount << "] " << reservation.roomType << " (Date booked: " << reservation.month << "/" << reservation.fromDate << "-" << reservation.toDate << ", Reference number: " << reservation.referenceNumber << ")";
+            cout << "  Status: " << (reservation.confirmed ? "CONFIRMED" : "PENDING") << endl;
+        }
+    }
+
+    if (reservationCount == 0) {
+        cout << "You have no reservations." << endl;
+    }
+
+    string display_opt;
+    cout << "\n[a] Cancel reservation\n";
+    cout << "[b] Back\n";
+    cout << "[c] Exit\n";
+    cout << "Enter your choice: ";
+    cin >> display_opt;
+
+    // Convert the input to uppercase
+    transform(display_opt.begin(), display_opt.end(), display_opt.begin(), ::toupper);
+
+    switch (display_opt[0]) {
+        case 'A':
+            deleteReservation();
+            system("pause");
+            break;
+        case 'B':
+            return;
+        case 'C':
+            cout << "Thank you for using the Reservation System. Goodbye!\n";
+            exit(0);
+        default:
+            cout << "Invalid entry.\n";
+    }
+
+    // Clear the input buffer
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+}
+
+
+void sched(const string& loggedInUsername) {
     Calendar calendar;
     int chosenFromDate, chosenToDate;
 
-    while(true){
-    	cout << "Enter the month number (1-12): ";
-	    cin >> chosenMonth;
-	
-	    if (chosenMonth < 1 || chosenMonth > NUM_MONTHS) {
-	        cout << "Invalid month number." << endl;
-	    } else {
-	    	break;
-		}
-	}
+    while (true) {
+        cout << "Enter the month number (1-12): ";
+        cin >> chosenMonth;
+
+        if (chosenMonth < 1 || chosenMonth > NUM_MONTHS) {
+            cout << "Invalid month number." << endl;
+        } else {
+            break;
+        }
+    }
 
     int numDays = calendar.getMonthDays(chosenMonth, 2024);
 
     // Display the calendar for the chosen month
     calendar.displayMonth(chosenMonth, 2024, 1);
 
-    while(true){
-    	cout << "Enter the starting date (1-" << numDays << "): ";
-	    cin >> chosenFromDate;
-	
-	    if (chosenFromDate < 1 || chosenFromDate > numDays) {
-	        cout << "Invalid date." << endl;
-	    } else {
-	    	break;
-		}
-	}
+    while (true) {
+        cout << "Enter the starting date (1-" << numDays << "): ";
+        cin >> chosenFromDate;
 
-    while(true){
-    	cout << "Enter the ending date (1-" << numDays << "): ";
-	    cin >> chosenToDate;
-	
-	    if (chosenToDate < chosenFromDate || chosenToDate > numDays) {
-	        cout << "Invalid date." << endl;
-	    } else {
-	    	break;
-		}
-	}
+        if (chosenFromDate < 1 || chosenFromDate > numDays) {
+            cout << "Invalid date." << endl;
+        } else {
+            break;
+        }
+    }
+
+    while (true) {
+        cout << "Enter the ending date (1-" << numDays << "): ";
+        cin >> chosenToDate;
+
+        if (chosenToDate < chosenFromDate || chosenToDate > numDays) {
+            cout << "Invalid date." << endl;
+        } else {
+            break;
+        }
+    }
 
     initializeRoomAvailability(chosenMonth); // Initialize the room availability vector
 
-    Roomreserve(chosenMonth, chosenFromDate, chosenToDate);
+    Roomreserve(chosenMonth, chosenFromDate, chosenToDate, loggedInUsername);
 }
 
 void DisplayRoomAvailability(int chosenMonth, int chosenFromDate) {
@@ -467,49 +517,4 @@ vector<RoomType> getAvailableRooms(int chosenMonth, int chosenFromDate) {
     }
 
     return availableRooms;
-}
-
-void maintab() {
-    char maintab_opt;
-    cout << endl;
-    cout << "Reservation System\n";
-    cout << "[a] Schedule room reservation\n";
-    cout << "[b] Display reservation(s)\n";
-    cout << "[c] Exit\n";
-    cout << "[d] Confirm a Reservation\n";
-    cout << "[e] Show available rooms\n";
-    cout << "Enter your choice: ";
-    cin >> maintab_opt;
-
-    // Convert the input to uppercase
-    maintab_opt = toupper(maintab_opt);
-
-    switch (maintab_opt) {
-        case 'A':
-            sched();
-            break;
-        case 'B':
-            Display_reservation();
-            break;
-        case 'C':
-            cout << "Thank you for using the Reservation System. Goodbye!\n";
-            exit(0);
-        case 'D':
-            confirmSelectedReservation();
-            break;
-        case 'E':
-            int chosenMonth, chosenFromDate;
-            cout << "Enter the month number (1-12): ";
-            cin >> chosenMonth;
-            cout << "Enter the date (1-" << calendar.getMonthDays(chosenMonth, 2024) << "): ";
-            cin >> chosenFromDate;
-            DisplayRoomAvailability(chosenMonth, chosenFromDate);
-            break;
-
-        default:
-            cout << "Invalid entry.\n";
-    }
-
-    // Clear the input buffer
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }

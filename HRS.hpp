@@ -24,9 +24,10 @@ struct Reservation {
     string roomType;
     string referenceNumber;
     int month;
-    int fromDate; // Changed date to fromDate to represent the start date of the reservation
-    int toDate; // Added toDate to represent the end date of the reservation
+    int fromDate;
+    int toDate;
     bool confirmed;
+    string loggedInUsername;
 };
 
 

@@ -44,16 +44,16 @@ void RoomReserve(){
     cout << "Enter your choice: ";
 }
 
-void Reservation(HotelReservationSystem& sys){
-	char choice;
-	do{
-		system("cls");
-		RoomReserve();
-		cin >> choice;
-		switch(choice){
-			case 'a':
-				sched();
-				break;
+void Reservation(HotelReservationSystem& sys, const string& loggedInUsername) {
+    char choice;
+    do {
+        system("cls");
+        RoomReserve();
+        cin >> choice;
+        switch (choice) {
+            case 'a':
+                sched(loggedInUsername); // Pass the loggedInUsername to sched
+                break;
 			case 'b':
 				char choice;
 				system("cls");
@@ -107,7 +107,7 @@ void AdminMenu(HotelReservationSystem& sys) {
         cin >> choice;
         switch (choice) {
             case 'a':
-            	Display_reservation();
+            	Display_reservation_admin();
             	break;
             case 'b':
             	confirmSelectedReservation();
@@ -129,12 +129,12 @@ void ClientMenu(HotelReservationSystem& sys, const string& loggedInUsername) {
         //loadReservationsFromFile();
         displayClientMenu();
         cin >> choice;
-        switch (choice) {
-	    case 'a':
-                Reservation(sys); 
+	    switch (choice) {
+            case 'a':
+                Reservation(sys, loggedInUsername); // Pass loggedInUsername to Reservation
                 break;
             case 'b':
-                Display_reservation();
+                Display_reservation_client(loggedInUsername);
                 break;
             case 'c':
                 Account_setting(sys, loggedInUsername);
@@ -202,7 +202,6 @@ int main() {
     loadReservationsFromFile();
     while (true) {
         showLoginPage(sys);
-        saveReservationsToFile();
     }
 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
     return 0;
