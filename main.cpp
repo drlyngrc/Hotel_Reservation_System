@@ -16,7 +16,8 @@ using namespace std;
 
 // Function to display the admin menu
 void displayAdminMenu() {
-    cout << "=== Manage Reservation Schedule === " << endl;
+    cout << "=== Manage Reservation Schedule === " << endl << endl;
+    Display_reservation_admin();
     cout << "[a] Display reservation/s" << endl;
     cout << "[b] Confirm reservation/s" << endl;
     cout << "[c] Back" << endl;
@@ -99,37 +100,17 @@ void Reservation(HotelReservationSystem& sys, const string& loggedInUsername) {
 
 // Function to handle the main admin menu
 void AdminMenu(HotelReservationSystem& sys) {
-
-    char choice;
-    do {
-    	system("cls");
-        displayAdminMenu();
-        cin >> choice;
-        switch (choice) {
-            case 'a':
-            	Display_reservation_admin();
-            	break;
-            case 'b':
-            	confirmSelectedReservation();
-            	system("pause");
-            	break;
-            case 'c':
-                cout << "Exiting..." << endl;
-          		break;
-            default:
-              	cout << "Invalid choice. Please try again." << endl;
-        }
-    } while (choice != 'c');
+	Display_reservation_admin();
 }
 
 void ClientMenu(HotelReservationSystem& sys, const string& loggedInUsername) {
     char choice;
     do {
         system("cls");
-        //loadReservationsFromFile();
         displayClientMenu();
         cin >> choice;
-	    switch (choice) {
+
+        switch (choice) {
             case 'a':
                 Reservation(sys, loggedInUsername); // Pass loggedInUsername to Reservation
                 break;
@@ -140,20 +121,24 @@ void ClientMenu(HotelReservationSystem& sys, const string& loggedInUsername) {
                 Account_setting(sys, loggedInUsername);
                 break;
             case 'd':
-            	cout << "Logging out..." << endl;
-            	break;
-			case 'e':
-				cout << "Exiting..." << endl;
+                cout << "Logging out..." << endl;
+                break;
+            case 'e':
+                cout << "Exiting..." << endl;
                 exit(0);
             default:
                 cout << "Invalid choice. Please try again." << endl;
         }
-        //saveReservationsToFile();
+
+        // Clear the input buffer to avoid invalid inputs causing issues in the next loop iteration
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+        system("pause");
     } while (choice != 'd');
 }
 
 // Function to login
-void showLoginPage(HotelReservationSystem& sys){
+void showLoginPage(HotelReservationSystem& sys) {
     Account account;
     system("cls");
     cout << "Login System" << endl;
@@ -162,39 +147,43 @@ void showLoginPage(HotelReservationSystem& sys){
     cout << "[b] Login" << endl;
     cout << "[c] Exit" << endl;
     cout << "Enter your choice: ";
+
     cin >> choice;
+    while (cin.fail() || (choice != 'a' && choice != 'b' && choice != 'c')) {
+        cout << "Invalid choice. Please try again: ";
+        cin.clear(); // Clear the error flag
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear the input buffer
+        cin >> choice;
+    }
 
     switch (choice) {
         case 'a':
             account.registerUser();
-            system("pause");
             break;
         case 'b': {
             string loggedInUsername = account.loginUser();
             if (!loggedInUsername.empty()) {
                 if (loggedInUsername == "admin") {
                     cout << "Admin is logged in." << endl;
-                    system("pause");
                     AdminMenu(sys);
                 } else {
-                    //cout << "Logged-in username: " << loggedInUsername << endl;
                     cout << "Logged in successfully." << endl;
-                    system("pause");
                     ClientMenu(sys, loggedInUsername); // Pass loggedInUsername to ClientMenu
                 }
             }
-            system("pause");
             break;
         }
         case 'c':
             cout << "Exiting..." << endl;
-            system("pause");
             exit(0);
         default:
             cout << endl << "Invalid Input" << endl;
-            system("pause");
             break;
     }
+
+    // Clear the input buffer
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    system("pause");
 }
 
 int main() {

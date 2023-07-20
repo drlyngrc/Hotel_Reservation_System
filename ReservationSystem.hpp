@@ -16,7 +16,6 @@ void confirmSelectedReservation();
 void Roomreserve(int chosenMonth, int chosenFromDate, int chosenToDate);
 void confirmSelectedReservation();
 void cancelReservation();
-void Display_reservation(const string& loggedInUsername);
 void sched(const string& loggedInUsername);
 void displayRoomInformation();
 void DisplayRoomAvailability(int chosenMonth, int chosenFromDate) ;
@@ -127,42 +126,42 @@ vector<Reservation> reservations;
 
 void Roomreserve(int chosenMonth, int chosenFromDate, int chosenToDate, const string& loggedInUsername) {
     string roomreserve_opt;
-    cout << endl;
-    cout << "Please select your preferred room type:\n";
-    for (int i = 0; i < roomTypes.size(); i++) {
-        cout << "[" << static_cast<char>('A' + i) << "] " << roomTypes[i].type << endl;
-    }
-    cout << "\n[" << static_cast<char>('A' + roomTypes.size()) << "] Back\n";
-    cout << "[" << static_cast<char>('A' + roomTypes.size() + 1) << "] Exit\n";
-    cout << "Enter your preferred room: ";
-    cin >> roomreserve_opt;
-
-    // Convert the input to uppercase
-    transform(roomreserve_opt.begin(), roomreserve_opt.end(), roomreserve_opt.begin(), ::toupper);
-
     int roomIndex = -1;
 
-    switch (roomreserve_opt[0]) {
-        case 'A':
-        case 'B':
-        case 'C':
-        case 'D':
-        case 'E':
-            roomIndex = roomreserve_opt[0] - 'A'; // Assigning value to roomIndex
-            break;
-        case 'F':
-            return;
-        case 'G':
-            cout << "Thank you for using the Reservation System. Goodbye!\n";
-            exit(0);
-        default:
-            cout << "Invalid entry.\n";
-            return;
-    }
+    while (true) {
+        cout << endl;
+        cout << "Please select your preferred room type:\n";
+        for (int i = 0; i < roomTypes.size(); i++) {
+            cout << "[" << static_cast<char>('A' + i) << "] " << roomTypes[i].type << endl;
+        }
+        cout << "\n[" << static_cast<char>('A' + roomTypes.size()) << "] Back\n";
+        cout << "[" << static_cast<char>('A' + roomTypes.size() + 1) << "] Exit\n";
+        cout << "Enter your preferred room: ";
+        cin >> roomreserve_opt;
 
-    if (roomIndex == -1) {
-        cout << "Invalid room selection.\n";
-        return;
+        // Convert the input to uppercase
+        transform(roomreserve_opt.begin(), roomreserve_opt.end(), roomreserve_opt.begin(), ::toupper);
+
+        switch (roomreserve_opt[0]) {
+            case 'A':
+            case 'B':
+            case 'C':
+            case 'D':
+            case 'E':
+                roomIndex = roomreserve_opt[0] - 'A'; // Assigning value to roomIndex
+                break;
+            case 'F':
+                return;
+            case 'G':
+                cout << "Thank you for using the Reservation System. Goodbye!\n";
+                exit(0);
+            default:
+                cout << "Invalid entry. Please try again.\n";
+                break; // Loop to re-ask for valid input
+        }
+
+        if (roomIndex != -1)
+            break; // Exit the loop if a valid room selection is made
     }
 
     if (roomTypes[roomIndex].availabilityByMonth[chosenMonth - 1].availability[chosenFromDate - 1] > 0) {
@@ -360,39 +359,54 @@ void deleteReservation() {
 }
 
 void Display_reservation_admin() {
-    cout << "\nList of RESERVATIONS:\n\n";
+    string display_opt;
+	do{
+	system("cls");
+    cout << "=== Manage Reservation Schedule ===" << endl << endl;
+    
+    if(reservations.size() == 0) {
+    	cout << "No reservations found." << endl;
+	}
     for (int i = 0; i < reservations.size(); i++) {
         Reservation reservation = reservations[i];
         cout << "[" << (i + 1) << "] " << "[Username: " << reservation.loggedInUsername << "] " << "[Room Type: " << reservation.roomType << "] " << " (Date booked: " << reservation.month << "/" << reservation.fromDate << "-" << reservation.toDate << ", Reference number: " << reservation.referenceNumber << ")";
         cout << "  Status: " << (reservation.confirmed ? "CONFIRMED" : "PENDING") << endl;
     }
 
-    string display_opt;
-    cout << "\n[a] Cancel reservation\n";
-    cout << "[b] Back\n";
-    cout << "[c] Exit\n";
+    cout << "\n[a] Confirm reservation";
+    cout << "\n[b] delete reservation\n";
+    cout << "[c] Logout\n";
+    cout << "[d] Exit\n";
     cout << "Enter your choice: ";
     cin >> display_opt;
+    cout << endl;
 
     // Convert the input to uppercase
     transform(display_opt.begin(), display_opt.end(), display_opt.begin(), ::toupper);
 
     switch (display_opt[0]) {
-        case 'A':
-            deleteReservation();
+    	case 'A':
+            confirmSelectedReservation();
             system("pause");
             break;
         case 'B':
-            return;
+            deleteReservation();
+            system("pause");
+            break;
         case 'C':
+			cout << "Logging out..." << endl;
+            break;
+        case 'D':
             cout << "Thank you for using the Reservation System. Goodbye!\n";
             exit(0);
         default:
             cout << "Invalid entry.\n";
     }
+	} while (display_opt[0] != 'C');
 }
 
 void Display_reservation_client(const string& loggedInUsername) {
+	system("cls");
     cout << "\nMY RESERVATIONS:\n";
     int reservationCount = 0;
 
@@ -415,7 +429,7 @@ void Display_reservation_client(const string& loggedInUsername) {
     cout << "[c] Exit\n";
     cout << "Enter your choice: ";
     cin >> display_opt;
-
+	cout << endl;
     // Convert the input to uppercase
     transform(display_opt.begin(), display_opt.end(), display_opt.begin(), ::toupper);
 
@@ -446,8 +460,10 @@ void sched(const string& loggedInUsername) {
         cout << "Enter the month number (1-12): ";
         cin >> chosenMonth;
 
-        if (chosenMonth < 1 || chosenMonth > NUM_MONTHS) {
-            cout << "Invalid month number." << endl;
+        if (cin.fail() || chosenMonth < 1 || chosenMonth > NUM_MONTHS) {
+            cout << "Invalid month number. Please try again." << endl;
+            cin.clear(); // Clear the error flag
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Clear the input buffer
         } else {
             break;
         }
@@ -479,6 +495,17 @@ void sched(const string& loggedInUsername) {
             break;
         }
     }
+    
+    system("cls");
+    
+    cout << "\nROOM AVAILABILITY on " << calendar.getMonthName(chosenMonth) << " " << chosenFromDate << ":\n";
+    cout << "Room Type\tAvailable Rooms\n";
+
+    for (const RoomType& roomType : roomTypes) {
+        int availableRooms = roomType.availabilityByMonth[chosenMonth - 1].availability[chosenFromDate - 1];
+        cout << roomType.type << "\t\t" << availableRooms << endl;
+    }
+    
 
     initializeRoomAvailability(chosenMonth); // Initialize the room availability vector
 
@@ -492,8 +519,6 @@ void DisplayRoomAvailability(int chosenMonth, int chosenFromDate) {
     }
 
     int numDays = calendar.getMonthDays(chosenMonth, 2024);
-
-    cout << "\nROOM AVAILABILITY on " << calendar.getMonthName(chosenMonth) << " " << chosenFromDate << ":\n";
     cout << "Room Type\tAvailable Rooms\n";
 
     for (const RoomType& roomType : roomTypes) {
