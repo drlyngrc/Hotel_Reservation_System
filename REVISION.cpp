@@ -493,10 +493,40 @@ void maintab() {
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 
+void loadReservationFile(const string& filename) {
+    ifstream inFile(filename);
+    if (!inFile.is_open()) {
+        cout << "Unable to open the reservation file: " << filename << endl;
+        return;
+    }
+
+    reservations.clear(); // Clear the existing reservations vector
+
+    string line;
+    while (getline(inFile, line)) {
+        istringstream iss(line);
+        Reservation reservation;
+
+        iss >> reservation.month >> reservation.fromDate >> reservation.toDate;
+        iss.ignore(); // Ignore the space between toDate and year
+        iss.ignore(); // Ignore the year (2024)
+        iss >> reservation.referenceNumber;
+        reservation.confirmed = true; // All reservations in the file are considered confirmed
+
+        reservations.push_back(reservation);
+    }
+
+    inFile.close();
+}
+
 int main() {
+    // Load reservations from the file when the program starts
+    loadReservationFile("reservations.txt");
+
     while (true) {
         maintab();
     }
 
     return 0;
 }
+
