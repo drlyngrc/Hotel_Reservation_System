@@ -168,13 +168,18 @@ void Roomreserve(int chosenMonth, int chosenFromDate, int chosenToDate, const st
         string referenceNumber = generateReferenceNumber();
         reservations.push_back({roomTypes[roomIndex].type, referenceNumber, chosenMonth, chosenFromDate, chosenToDate, false, loggedInUsername});
         // Store the reservation details in unavailable_date.txt
-        ofstream outFile("reservations.txt", ios::app);
-        if (outFile.is_open()) {
-            outFile << chosenMonth << " " << chosenFromDate << " " << chosenToDate << " 2024 " << referenceNumber << " " << loggedInUsername << endl;
-            outFile.close();
-        } else {
-            cout << "Unable to open the file for writing." << endl;
+        ofstream outFile("reservations.txt");
+    if (outFile.is_open()) {
+        for (const Reservation& reservation : reservations) {
+            outFile << reservation.roomType << "," << reservation.referenceNumber << ","
+                    << reservation.month << "," << reservation.fromDate << ","
+                    << reservation.toDate << "," << reservation.confirmed << "," << reservation.loggedInUsername << endl;
         }
+        outFile.close();
+        cout << "Reservations saved successfully." << endl;
+    } else {
+        cout << "Unable to open the file for writing." << endl;
+    }
 
         // Calculate the total amount based on the price, the duration of the stay, and the priceMultiplier
         int numDays = chosenToDate - chosenFromDate;
@@ -193,21 +198,6 @@ void Roomreserve(int chosenMonth, int chosenFromDate, int chosenToDate, const st
     }
 }
 
-void saveReservationsToFile() {
-    ofstream outFile("reservations.txt");
-    if (outFile.is_open()) {
-        for (const Reservation& reservation : reservations) {
-            outFile << reservation.roomType << "," << reservation.referenceNumber << ","
-                    << reservation.month << "," << reservation.fromDate << ","
-                    << reservation.toDate << "," << reservation.confirmed << "," << reservation.loggedInUsername << endl;
-        }
-        outFile.close();
-        cout << "Reservations saved successfully." << endl;
-    } else {
-        cout << "Unable to open the file for writing." << endl;
-    }
-}
-
 // Function to load reservations from a file
 void loadReservationsFromFile() {
     ifstream inFile("reservations.txt");
@@ -215,6 +205,7 @@ void loadReservationsFromFile() {
         reservations.clear();
         string line;
         while (getline(inFile, line)) {
+        	std::cout << line << std::endl;
             istringstream iss(line);
             string roomType, referenceNumber, loggedInUsername, confirmedStr;
             int month, fromDate, toDate;
@@ -231,9 +222,6 @@ void loadReservationsFromFile() {
             }
         }
         inFile.close();
-        cout << "Reservations loaded successfully." << endl;
-    } else {
-        cout << "Unable to open the file for reading." << endl;
     }
 }
 
