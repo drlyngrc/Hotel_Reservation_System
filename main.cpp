@@ -188,7 +188,6 @@ void showLoginPage(HotelReservationSystem& sys) {
 
 int main() {
     HotelReservationSystem sys;
-    loadReservationsFromFile();
     while (true) {
         showLoginPage(sys);
     }
